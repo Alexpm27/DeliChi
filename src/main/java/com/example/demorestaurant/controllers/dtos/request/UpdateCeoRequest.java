@@ -4,11 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class CreateCeoRequest {
-    private String name;
-    private String last_name;
+public class UpdateCeoRequest {
     private Long phone_number;
     private String email;
     private String password;
-
 }
