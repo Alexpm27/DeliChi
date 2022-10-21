@@ -43,7 +43,6 @@ public class User {
 
     @Column(name = "phone_number")
     @NotNull
-    @NotBlank
     private Long phone_number;
 
     @OneToMany(mappedBy = "user")
