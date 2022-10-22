@@ -48,6 +48,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
 
-    @OneToOne(mappedBy = "user")
-    private Reservation reservation;
+    @OneToMany(mappedBy = "user")
+    private List<Reservation> reservations;
 }
