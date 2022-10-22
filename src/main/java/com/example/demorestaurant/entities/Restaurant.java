@@ -41,7 +41,6 @@ public class Restaurant {
 
     @Column(name = "phone_number")
     @NotNull
-    @NotBlank
     private Long phone_number;
 
     @ManyToOne
