@@ -1,14 +1,14 @@
-package com.example.demorestaurant.controllers.dtos.request;
+package com.example.demorestaurant.controllers.dtos.response;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class CreateCeoRequest {
+public class GetCeoResponse {
+    private Long id;
     private String name;
     private String last_name;
     private Long phone_number;
     private String email;
     private String password;
-
 }

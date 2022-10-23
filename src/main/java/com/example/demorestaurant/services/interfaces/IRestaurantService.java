@@ -1,5 +1,14 @@
 package com.example.demorestaurant.services.interfaces;
 
-public interface IRestaurantService {
+import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
+import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
+import com.example.demorestaurant.controllers.dtos.response.CreateRestaurantResponse;
+import com.example.demorestaurant.controllers.dtos.response.GetRestaurantResponse;
+import com.example.demorestaurant.controllers.dtos.response.UpdateRestaurantResponse;
 
+public interface IRestaurantService {
+    CreateRestaurantResponse create(CreateRestaurantRequest request);
+    GetRestaurantResponse get(Long id);
+    UpdateRestaurantResponse update(UpdateRestaurantRequest request, Long id);
+    void delete(Long id);
 }

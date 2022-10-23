@@ -10,6 +10,6 @@ public class GetRestaurantResponse {
     private String address;
     private String schedule;
     private String kitchen;
-    private String phone_number;
+    private Long phone_number;
     private String name_ceo;
 }

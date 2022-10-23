@@ -4,11 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class CreateCeoRequest {
+public class UpdateRestaurantRequest {
     private String name;
-    private String last_name;
+    private String address;
+    private String kitchen;
     private Long phone_number;
-    private String email;
-    private String password;
-
+    private String schedule;
+    private Long ceo_id;
 }

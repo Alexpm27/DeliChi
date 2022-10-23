@@ -32,8 +32,7 @@ public class Reservation {
     @ManyToOne
     private Restaurant restaurant;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
     private User user;
 }
 

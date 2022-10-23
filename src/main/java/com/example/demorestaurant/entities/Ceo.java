@@ -42,7 +42,6 @@ public class Ceo {
 
     @Column(name = "phone_number")
     @NotNull
-    @NotBlank
     private Long phone_number;
 
     @OneToMany(mappedBy = "ceo")
