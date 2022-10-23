@@ -24,24 +24,27 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public GetUserResponse getUsers(Long id) {
-        User user = findAndEnsureExists(id);
-        return from_GU(user);
+        User user = FindAndEnsureExists(id);
+        return from_get(user);
     }
 
+    // List all users
     @Override
     public List<GetUserResponse> userList() {
-        return repository.findAll().stream().map(user -> from_GU(user)).collect(Collectors.toList());
+        return repository.findAll().stream().map(user -> from_get(user)).collect(Collectors.toList());
     }
 
+    // Create a user
     @Override
     public CreateUserResponse createUser(CreateUserRequest request) {
         User save = repository.save(from(request));
-        return from_CU(save);
+        return from_create(save);
     }
 
+    // Update a user
     @Override
     public UpdateUserResponse updateUser(Long id, UpdateUserRequest request) {
-        User user = findAndEnsureExists(id);
+        User user = FindAndEnsureExists(id);
         user.setEmail(request.getEmail());
         user.setName(request.getName());
         user.setLast_name(request.getLast_name());
@@ -49,19 +52,20 @@ public class UserServiceImpl implements IUserService {
 
         User save = repository.save(user);
 
-        return from_UU(save);
+        return from_upd(save);
     }
 
+    // Delete a user
     @Override
     public void deleteUser(Long id) {
-        repository.delete(findAndEnsureExists(id));
+        repository.delete(FindAndEnsureExists(id));
     }
 
 
     // METHODS THAT TRANSFORM A USER TO A RESPONSE
 
     // Transform a user to a CreateUserResponse
-    private CreateUserResponse from_CU (User user) {
+    private CreateUserResponse from_create (User user) {
         CreateUserResponse response = new CreateUserResponse();
         response.setId(user.getId());
         response.setEmail(user.getEmail());
@@ -73,7 +77,7 @@ public class UserServiceImpl implements IUserService {
 
 
     // Transform a user to a GetUserResponse
-    private GetUserResponse from_GU (User user) {
+    private GetUserResponse from_get (User user) {
         GetUserResponse response = new GetUserResponse();
         response.setId(user.getId());
         response.setEmail(user.getEmail());
@@ -84,7 +88,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     // Transform a user to a UpdateUserResponse
-    private UpdateUserResponse from_UU (User user){
+    private UpdateUserResponse from_upd (User user){
         UpdateUserResponse response = new UpdateUserResponse();
         response.setId(user.getId());
         response.setEmail(user.getEmail());
@@ -108,19 +112,8 @@ public class UserServiceImpl implements IUserService {
         return user;
     }
 
-    // Transform a UpdateUserRequest to a user and return a user
-    private User from (UpdateUserRequest request) {
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setName(request.getName());
-        user.setLast_name(request.getLast_name());
-        user.setPhone_number(request.getPhone_number());
-        user.setPassword(request.getPassword());
-        return user;
-    }
-
     // Other methods
-    private User findAndEnsureExists(Long id){
+    private User FindAndEnsureExists(Long id){
         return repository.findById(id).orElseThrow(() -> new RuntimeException("ID NOT FOUND"));
     }
 
