@@ -1,18 +1,22 @@
 package com.example.demorestaurant.services;
 
 
+import com.example.demorestaurant.controllers.dtos.response.*;
+import com.example.demorestaurant.entities.projections.RestaurantProjection;
+import com.example.demorestaurant.services.interfaces.ICeoService;
 import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
-import com.example.demorestaurant.controllers.dtos.response.CreateRestaurantResponse;
-import com.example.demorestaurant.controllers.dtos.response.GetRestaurantResponse;
-import com.example.demorestaurant.controllers.dtos.response.UpdateRestaurantResponse;
 import com.example.demorestaurant.entities.Ceo;
 import com.example.demorestaurant.entities.Restaurant;
 import com.example.demorestaurant.repositories.ICeoRepository;
 import com.example.demorestaurant.repositories.IRestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RestaurantServiceImpl implements IRestaurantService {
@@ -45,6 +49,41 @@ public class RestaurantServiceImpl implements IRestaurantService {
     @Override
     public void delete(Long id) {
         repository.delete(FindRestaurantAndEnsureExist(id));
+    }
+
+    @Override
+    public BaseResponse getRestaurantByRestaurantId(Long restaurantId) {
+        return BaseResponse.builder()
+                .data(from(repository.getRestaurantByRestaurantId(restaurantId)))
+                .message("Restaurant by restaurant id")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
+    }
+    @Override
+    public BaseResponse listAllRestaurants() {
+        return BaseResponse.builder()
+                .data(repository.listAllRestaurants()
+                        .stream()
+                        .map(this::from)
+                        .collect(Collectors.toList()))
+                .message("Restaurants list")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
+    }
+
+    private RestaurantResponse from(RestaurantProjection restaurant){
+        RestaurantResponse response = new RestaurantResponse();
+        response.setCeoId(restaurant.getCeoId());
+        response.setCeoName(restaurant.getCeoName());
+        response.setRestaurantId(restaurant.getRestaurantId());
+        response.setRestaurantName(restaurant.getRestaurantName());
+        response.setRestaurantAddress(restaurant.getRestaurantAddress());
+        response.setZoneId(restaurant.getZoneId());
+        response.setZoneName(restaurant.getZoneName());
+        response.setRestaurantPhoneNumber(restaurant.getRestaurantPhoneNumber());
+        response.setRestaurantKitchent(restaurant.getRestaurantKitchent());
+        response.setRestaurantSchedule(restaurant.getRestaurantSchedule());
+        return response;
     }
 
     private CreateRestaurantResponse from(Restaurant restaurant){

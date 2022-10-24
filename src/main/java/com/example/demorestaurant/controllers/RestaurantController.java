@@ -1,7 +1,9 @@
 package com.example.demorestaurant.controllers;
 
+import com.example.demorestaurant.controllers.dtos.response.BaseResponse;
 import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
@@ -37,4 +39,15 @@ public class RestaurantController {
         service.delete(id);
     }
 
+    @GetMapping("{restaurantId}")
+    public ResponseEntity<BaseResponse> getRestaurantByRestaurantId(@PathVariable Long restaurantId){
+        BaseResponse baseResponse = service.getRestaurantByRestaurantId(restaurantId);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
+    @GetMapping("restaurants")
+    public ResponseEntity<BaseResponse> listAllRestaurants(){
+        BaseResponse baseResponse = service.listAllRestaurants();
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
 }

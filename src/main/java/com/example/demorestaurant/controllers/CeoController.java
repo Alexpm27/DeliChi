@@ -2,14 +2,14 @@ package com.example.demorestaurant.controllers;
 
 import com.example.demorestaurant.controllers.dtos.request.CreateCeoRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateCeoRequest;
-import com.example.demorestaurant.controllers.dtos.response.CreateCeoResponse;
-import com.example.demorestaurant.controllers.dtos.response.GetCeoResponse;
-import com.example.demorestaurant.controllers.dtos.response.UpdateCeoResponse;
+import com.example.demorestaurant.controllers.dtos.response.*;
 import com.example.demorestaurant.services.interfaces.ICeoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.CacheResponse;
+import java.util.List;
 
 @RestController
 @RequestMapping("ceo")
@@ -35,6 +35,12 @@ public class CeoController {
     @DeleteMapping("{id}")
     public void delete(@PathVariable Long id){
         service.delete(id);
+    }
+
+    @GetMapping("restaurants/ceo/{ceoId}")
+    public ResponseEntity<BaseResponse> listAllRestaurantsByCeoId(@PathVariable Long ceoId){
+        BaseResponse baseResponse = service.listAllRestaurantsByCeoId(ceoId);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
 }

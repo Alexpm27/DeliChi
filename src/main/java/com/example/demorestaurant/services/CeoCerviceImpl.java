@@ -2,14 +2,16 @@ package com.example.demorestaurant.services;
 
 import com.example.demorestaurant.controllers.dtos.request.CreateCeoRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateCeoRequest;
-import com.example.demorestaurant.controllers.dtos.response.CreateCeoResponse;
-import com.example.demorestaurant.controllers.dtos.response.GetCeoResponse;
-import com.example.demorestaurant.controllers.dtos.response.UpdateCeoResponse;
+import com.example.demorestaurant.controllers.dtos.response.*;
 import com.example.demorestaurant.entities.Ceo;
+import com.example.demorestaurant.entities.projections.RestaurantProjection;
 import com.example.demorestaurant.repositories.ICeoRepository;
 import com.example.demorestaurant.services.interfaces.ICeoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 public class CeoCerviceImpl implements ICeoService {
@@ -86,4 +88,30 @@ public class CeoCerviceImpl implements ICeoService {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("not found"));
     }
 
+    @Override
+    public BaseResponse listAllRestaurantsByCeoId(Long ceoId){
+        return BaseResponse.builder()
+                .data(repository.listAllRestaurantsByCeoId(ceoId)
+                        .stream()
+                        .map(this::from)
+                        .collect(Collectors.toList()))
+                .message("Restaurants list by ceos id")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
+    }
+
+    private RestaurantResponse from(RestaurantProjection restaurant){
+        RestaurantResponse response = new RestaurantResponse();
+        response.setCeoId(restaurant.getCeoId());
+        response.setCeoName(restaurant.getCeoName());
+        response.setRestaurantId(restaurant.getRestaurantId());
+        response.setRestaurantName(restaurant.getRestaurantName());
+        response.setRestaurantAddress(restaurant.getRestaurantAddress());
+        response.setZoneId(restaurant.getZoneId());
+        response.setZoneName(restaurant.getZoneName());
+        response.setRestaurantPhoneNumber(restaurant.getRestaurantPhoneNumber());
+        response.setRestaurantKitchent(restaurant.getRestaurantKitchent());
+        response.setRestaurantSchedule(restaurant.getRestaurantSchedule());
+        return response;
+    }
 }
