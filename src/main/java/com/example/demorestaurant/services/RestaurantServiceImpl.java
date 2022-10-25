@@ -1,9 +1,9 @@
 package com.example.demorestaurant.services;
 
 
-import com.example.demorestaurant.controllers.dtos.response.*;
+import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.projections.RestaurantProjection;
-import com.example.demorestaurant.services.interfaces.ICeoService;
+import com.example.demorestaurant.entities.projections.RestaurantProjection2;
 import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
@@ -51,6 +51,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
         repository.delete(FindRestaurantAndEnsureExist(id));
     }
 
+
     @Override
     public BaseResponse getRestaurantByRestaurantId(Long restaurantId) {
         return BaseResponse.builder()
@@ -85,7 +86,16 @@ public class RestaurantServiceImpl implements IRestaurantService {
         response.setRestaurantSchedule(restaurant.getRestaurantSchedule());
         return response;
     }
-
+    private GetRestaurantResponse from(RestaurantProjection2 restaurant){
+        GetRestaurantResponse response = new GetRestaurantResponse();
+        response.setSchedule(restaurant.getSchedule());
+        response.setName(restaurant.getName());
+        response.setKitchen(restaurant.getKitchen());
+        response.setPhone_number(restaurant.getPhone_number());
+        response.setAddress(restaurant.getAddress());
+        response.setName_ceo(restaurant.getName_ceo());
+        return response;
+    }
     private CreateRestaurantResponse from(Restaurant restaurant){
         CreateRestaurantResponse response = new CreateRestaurantResponse();
         response.setId(restaurant.getId());

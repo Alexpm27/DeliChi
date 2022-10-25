@@ -2,13 +2,10 @@ package com.example.demorestaurant.services.interfaces;
 
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
-import com.example.demorestaurant.controllers.dtos.response.BaseResponse;
-import com.example.demorestaurant.controllers.dtos.response.CreateRestaurantResponse;
-import com.example.demorestaurant.controllers.dtos.response.GetRestaurantResponse;
-import com.example.demorestaurant.controllers.dtos.response.UpdateRestaurantResponse;
-import com.example.demorestaurant.entities.projections.RestaurantProjection;
-
-import java.util.List;
+import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
+import com.example.demorestaurant.controllers.dtos.responses.CreateRestaurantResponse;
+import com.example.demorestaurant.controllers.dtos.responses.GetRestaurantResponse;
+import com.example.demorestaurant.controllers.dtos.responses.UpdateRestaurantResponse;
 
 public interface IRestaurantService {
     CreateRestaurantResponse create(CreateRestaurantRequest request);

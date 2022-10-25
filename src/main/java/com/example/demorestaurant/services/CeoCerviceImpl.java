@@ -2,7 +2,7 @@ package com.example.demorestaurant.services;
 
 import com.example.demorestaurant.controllers.dtos.request.CreateCeoRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateCeoRequest;
-import com.example.demorestaurant.controllers.dtos.response.*;
+import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.Ceo;
 import com.example.demorestaurant.entities.projections.RestaurantProjection;
 import com.example.demorestaurant.repositories.ICeoRepository;

@@ -1,10 +1,10 @@
-package com.example.demorestaurant.controllers.dtos.response;
+package com.example.demorestaurant.controllers.dtos.responses;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class GetCeoResponse {
+public class CreateCeoResponse {
     private Long id;
     private String name;
     private String last_name;

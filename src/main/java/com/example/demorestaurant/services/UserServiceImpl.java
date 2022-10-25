@@ -2,9 +2,9 @@ package com.example.demorestaurant.services;
 
 import com.example.demorestaurant.controllers.dtos.request.CreateUserRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateUserRequest;
-import com.example.demorestaurant.controllers.dtos.response.CreateUserResponse;
-import com.example.demorestaurant.controllers.dtos.response.GetUserResponse;
-import com.example.demorestaurant.controllers.dtos.response.UpdateUserResponse;
+import com.example.demorestaurant.controllers.dtos.responses.CreateUserResponse;
+import com.example.demorestaurant.controllers.dtos.responses.GetUserResponse;
+import com.example.demorestaurant.controllers.dtos.responses.UpdateUserResponse;
 import com.example.demorestaurant.entities.User;
 import com.example.demorestaurant.repositories.IUserRepository;
 import com.example.demorestaurant.services.interfaces.IUserService;

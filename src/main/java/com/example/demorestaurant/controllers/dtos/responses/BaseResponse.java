@@ -1,4 +1,4 @@
-package com.example.demorestaurant.controllers.dtos.response;
+package com.example.demorestaurant.controllers.dtos.responses;
 
 import lombok.Builder;
 import lombok.Getter;
