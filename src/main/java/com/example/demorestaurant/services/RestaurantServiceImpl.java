@@ -60,6 +60,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
+    
     @Override
     public BaseResponse listAllRestaurants() {
         return BaseResponse.builder()
