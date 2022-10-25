@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 
 @Service
-public class CeoCerviceImpl implements ICeoService {
+public class CeoServiceImpl implements ICeoService {
     @Autowired
     private ICeoRepository repository;
 
@@ -42,7 +42,7 @@ public class CeoCerviceImpl implements ICeoService {
         repository.delete(FindAndEnsureExist(id));
     }
 
-    CreateCeoResponse from(Ceo ceo){
+    private CreateCeoResponse from(Ceo ceo){
         CreateCeoResponse response = new CreateCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
@@ -52,7 +52,7 @@ public class CeoCerviceImpl implements ICeoService {
         response.setPassword(ceo.getPassword());
         return response;
     }
-    Ceo from(CreateCeoRequest request){
+    private Ceo from(CreateCeoRequest request){
         Ceo ceo = new Ceo();
         ceo.setName(request.getName());
         ceo.setLast_name(request.getLast_name());
@@ -62,7 +62,7 @@ public class CeoCerviceImpl implements ICeoService {
         return ceo;
     }
 
-    GetCeoResponse from_get(Ceo ceo){
+    private GetCeoResponse from_get(Ceo ceo){
         GetCeoResponse response = new GetCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
@@ -73,7 +73,7 @@ public class CeoCerviceImpl implements ICeoService {
         return response;
     }
 
-    UpdateCeoResponse from_upd(Ceo ceo){
+    private UpdateCeoResponse from_upd(Ceo ceo){
         UpdateCeoResponse response = new UpdateCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
