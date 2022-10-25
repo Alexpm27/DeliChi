@@ -1,7 +1,7 @@
 package com.example.demorestaurant.controllers.advices;
 
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
-import com.example.demorestaurant.controllers.exceptions.UpchiapasException;
+import com.example.demorestaurant.entities.exceptions.UpchiapasException;
 //import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

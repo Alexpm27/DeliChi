@@ -15,8 +15,9 @@ public class CeoController {
     private ICeoService service;
 
     @PostMapping
-    public CreateCeoResponse create(@RequestBody CreateCeoRequest request){
-        return service.create(request);
+    public ResponseEntity<BaseResponse> create(@RequestBody CreateCeoRequest request){
+        BaseResponse baseResponse = service.create(request);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @GetMapping("{id}")
@@ -25,8 +26,9 @@ public class CeoController {
     }
 
     @PutMapping("{id}")
-    public UpdateCeoResponse update(@RequestBody UpdateCeoRequest request, @PathVariable Long id){
-        return service.update(request, id);
+    public ResponseEntity<BaseResponse> update(@RequestBody UpdateCeoRequest request, @PathVariable Long id){
+        BaseResponse baseResponse = service.update(request, id);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @DeleteMapping("{id}")

@@ -19,8 +19,14 @@ public class CeoServiceImpl implements ICeoService {
     private ICeoRepository repository;
 
     @Override
-    public CreateCeoResponse create(CreateCeoRequest request) {
-        return from(repository.save(from(request)));
+    public BaseResponse create(CreateCeoRequest request) {
+        Ceo ceo = from(request);
+
+        return BaseResponse.builder()
+                .data(from(repository.save(ceo)))
+                .message("student created correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
@@ -29,12 +35,18 @@ public class CeoServiceImpl implements ICeoService {
     }
 
     @Override
-    public UpdateCeoResponse update(UpdateCeoRequest request, Long id) {
+    public BaseResponse update(UpdateCeoRequest request, Long id) {
         Ceo ceo = FindAndEnsureExist(id);
+        ceo.setName(request.getName());
+        ceo.setLast_name(request.getLast_name());
         ceo.setPhone_number(request.getPhone_number());
         ceo.setEmail(request.getEmail());
         ceo.setPassword(request.getPassword());
-        return from_upd(repository.save(ceo));
+        return BaseResponse.builder()
+                .data(from_upd(repository.save(ceo)))
+                .message("student update correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override

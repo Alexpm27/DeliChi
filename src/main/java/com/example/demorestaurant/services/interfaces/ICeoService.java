@@ -8,11 +8,11 @@ import com.example.demorestaurant.controllers.dtos.responses.GetCeoResponse;
 import com.example.demorestaurant.controllers.dtos.responses.UpdateCeoResponse;
 
 public interface ICeoService {
-    CreateCeoResponse create(CreateCeoRequest request);
+    BaseResponse create(CreateCeoRequest request);
 
     GetCeoResponse get(Long id);
 
-    UpdateCeoResponse update(UpdateCeoRequest request, Long id);
+    BaseResponse update(UpdateCeoRequest request, Long id);
 
     void delete(Long id);
 

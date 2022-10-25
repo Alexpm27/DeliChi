@@ -1,4 +1,4 @@
-package com.example.demorestaurant.controllers.exceptions;
+package com.example.demorestaurant.entities.exceptions;
 
 public class UpchiapasException extends RuntimeException{
     public UpchiapasException(String message) {
