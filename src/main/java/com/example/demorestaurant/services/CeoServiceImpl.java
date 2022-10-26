@@ -96,7 +96,8 @@ public class CeoServiceImpl implements ICeoService {
         return response;
     }
 
-    private Ceo FindAndEnsureExist(Long id){
+    @Override
+    public Ceo FindAndEnsureExist(Long id){
         return repository.findById(id).orElseThrow(() -> new RuntimeException("not found"));
     }
 

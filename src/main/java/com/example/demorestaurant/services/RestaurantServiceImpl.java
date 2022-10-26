@@ -3,19 +3,15 @@ package com.example.demorestaurant.services;
 
 import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.projections.RestaurantProjection;
-import com.example.demorestaurant.entities.projections.RestaurantProjection2;
 import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
-import com.example.demorestaurant.entities.Ceo;
 import com.example.demorestaurant.entities.Restaurant;
-import com.example.demorestaurant.repositories.ICeoRepository;
 import com.example.demorestaurant.repositories.IRestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +20,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
     private IRestaurantRepository repository;
 
     @Autowired
-    private ICeoRepository ceo_repository;
+    private CeoServiceImpl service;
 
     public CreateRestaurantResponse create(CreateRestaurantRequest request){
         return from(repository.save(from(request)));
@@ -60,7 +56,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
-    //metod
+
     @Override
     public BaseResponse listAllRestaurants() {
         return BaseResponse.builder()
@@ -87,16 +83,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
         response.setRestaurantSchedule(restaurant.getRestaurantSchedule());
         return response;
     }
-    private GetRestaurantResponse from(RestaurantProjection2 restaurant){
-        GetRestaurantResponse response = new GetRestaurantResponse();
-        response.setSchedule(restaurant.getSchedule());
-        response.setName(restaurant.getName());
-        response.setKitchen(restaurant.getKitchen());
-        response.setPhone_number(restaurant.getPhone_number());
-        response.setAddress(restaurant.getAddress());
-        response.setName_ceo(restaurant.getName_ceo());
-        return response;
-    }
+
     private CreateRestaurantResponse from(Restaurant restaurant){
         CreateRestaurantResponse response = new CreateRestaurantResponse();
         response.setId(restaurant.getId());
@@ -110,7 +97,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
         restaurant.setKitchen(request.getKitchen());
         restaurant.setPhone_number(request.getPhone_number());
         restaurant.setSchedule(request.getSchedule());
-        restaurant.setCeo(FindCeoAndEnsureExist(request.getCeo_id()));
+        restaurant.setCeo(service.FindAndEnsureExist(request.getCeo_id()));
         return restaurant;
     }
     private GetRestaurantResponse from_get(Restaurant restaurant){
@@ -130,11 +117,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
         return response;
     }
 
-    private Ceo FindCeoAndEnsureExist(Long id){
-        return ceo_repository.findById(id).orElseThrow(() -> new RuntimeException("not found"));
-    }
-
-    private Restaurant FindRestaurantAndEnsureExist(Long id){
+    public Restaurant FindRestaurantAndEnsureExist(Long id){
         return repository.findById(id).orElseThrow(() -> new RuntimeException("not found"));
     }
 }

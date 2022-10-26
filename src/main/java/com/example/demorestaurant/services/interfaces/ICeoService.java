@@ -6,6 +6,7 @@ import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.CreateCeoResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetCeoResponse;
 import com.example.demorestaurant.controllers.dtos.responses.UpdateCeoResponse;
+import com.example.demorestaurant.entities.Ceo;
 
 public interface ICeoService {
     BaseResponse create(CreateCeoRequest request);
@@ -17,4 +18,6 @@ public interface ICeoService {
     void delete(Long id);
 
     BaseResponse listAllRestaurantsByCeoId(Long ceoId);
+
+    Ceo FindAndEnsureExist(Long id);
 }
