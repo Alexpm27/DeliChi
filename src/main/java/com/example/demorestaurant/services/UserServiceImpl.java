@@ -2,6 +2,7 @@ package com.example.demorestaurant.services;
 
 import com.example.demorestaurant.controllers.dtos.request.CreateUserRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateUserRequest;
+import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.CreateUserResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetUserResponse;
 import com.example.demorestaurant.controllers.dtos.responses.UpdateUserResponse;
@@ -9,6 +10,7 @@ import com.example.demorestaurant.entities.User;
 import com.example.demorestaurant.repositories.IUserRepository;
 import com.example.demorestaurant.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,36 +25,53 @@ public class UserServiceImpl implements IUserService {
     private IUserRepository repository;
 
     @Override
-    public GetUserResponse getUsers(Long id) {
+    public GetUserResponse getUserById(Long id) {
         User user = FindAndEnsureExists(id);
         return from_get(user);
     }
 
     // List all users
     @Override
-    public List<GetUserResponse> userList() {
-        return repository.findAll().stream().map(user -> from_get(user)).collect(Collectors.toList());
+    public BaseResponse userList() {
+        return BaseResponse.builder()
+                .data(repository.findAll()
+                        .stream()
+                        .map(user -> from_get(user))
+                        .collect(Collectors.toList()))
+                .message("Users list by ceos id")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 
     // Create a user
     @Override
-    public CreateUserResponse createUser(CreateUserRequest request) {
+    public BaseResponse createUser(CreateUserRequest request) {
+        User user = from(request);
+
         User save = repository.save(from(request));
-        return from_create(save);
+        return BaseResponse.builder()
+                .data(repository.save(user))
+                .message("User created correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     // Update a user
     @Override
-    public UpdateUserResponse updateUser(Long id, UpdateUserRequest request) {
+    public BaseResponse updateUser(Long id, UpdateUserRequest request) {
         User user = FindAndEnsureExists(id);
         user.setEmail(request.getEmail());
         user.setName(request.getName());
         user.setLast_name(request.getLast_name());
         user.setPhone_number(request.getPhone_number());
 
-        User save = repository.save(user);
-
-        return from_upd(save);
+        return BaseResponse.builder()
+                .data(repository.save(user))
+                .message("User updated correctly")
+                .httpStatus(HttpStatus.OK)
+                .success(Boolean.TRUE)
+                .build();
     }
 
     // Delete a user

@@ -2,6 +2,7 @@ package com.example.demorestaurant.services.interfaces;
 
 import com.example.demorestaurant.controllers.dtos.request.CreateUserRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateUserRequest;
+import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.CreateUserResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetUserResponse;
 import com.example.demorestaurant.controllers.dtos.responses.UpdateUserResponse;
@@ -10,13 +11,13 @@ import java.util.List;
 
 public interface IUserService {
 
-    GetUserResponse getUsers (Long id);
+    GetUserResponse getUserById (Long id);
 
-    List<GetUserResponse> userList ();
+    BaseResponse userList ();
 
-    CreateUserResponse createUser (CreateUserRequest request);
+    BaseResponse createUser (CreateUserRequest request);
 
-    UpdateUserResponse updateUser (Long id, UpdateUserRequest request);
+    BaseResponse updateUser (Long id, UpdateUserRequest request);
 
     void deleteUser (Long id);
 }
