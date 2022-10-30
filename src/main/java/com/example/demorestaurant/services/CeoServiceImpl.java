@@ -35,6 +35,11 @@ public class CeoServiceImpl implements ICeoService {
                 .httpStatus(HttpStatus.OK).build();
     }
 
+    @Override
+    public GetCeoResponse get(Long id) {
+        return from_get(FindAndEnsureExist(id));
+    }
+
     //get a ceo
     @Override
     public BaseResponse get(GetCeoRequest request) {
@@ -45,6 +50,8 @@ public class CeoServiceImpl implements ICeoService {
                 .httpStatus(HttpStatus.OK)
                 .build();
     }
+
+
 
     //update a ceo
     @Override
@@ -88,7 +95,7 @@ public class CeoServiceImpl implements ICeoService {
     public GetCeoResponse get(Long id) {
         return from_get(FindAndEnsureExist(id));
     }*/
-    /*private GetCeoResponse from_get(Ceo ceo){
+    private GetCeoResponse from_get(Ceo ceo){
         GetCeoResponse response = new GetCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
@@ -97,7 +104,7 @@ public class CeoServiceImpl implements ICeoService {
         response.setEmail(ceo.getEmail());
         response.setPassword(ceo.getPassword());
         return response;
-    }*/
+    }
 
     /*@Override
     public List<RestaurantResponse> listRestaurantsFromCeoId(Long ceoId) {

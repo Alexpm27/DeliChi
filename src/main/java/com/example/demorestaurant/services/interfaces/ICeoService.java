@@ -12,7 +12,7 @@ import java.util.List;
 public interface ICeoService {
     BaseResponse create(CreateCeoRequest request);
 
-    //GetCeoResponse get(Long id);
+    GetCeoResponse get(Long id);
 
     BaseResponse get(GetCeoRequest request);
 
