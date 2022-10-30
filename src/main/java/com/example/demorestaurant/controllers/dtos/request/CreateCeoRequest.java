@@ -10,5 +10,4 @@ public class CreateCeoRequest {
     private Long phone_number;
     private String email;
     private String password;
-
 }

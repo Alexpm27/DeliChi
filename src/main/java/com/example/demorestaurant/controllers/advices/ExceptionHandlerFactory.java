@@ -1,6 +1,7 @@
 package com.example.demorestaurant.controllers.advices;
 
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
+import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.exceptions.UpchiapasException;
 //import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -157,6 +158,16 @@ public class ExceptionHandlerFactory {
                 .message(exception.getLocalizedMessage())
                 .success(false)
                 .httpStatus(HttpStatus.NOT_FOUND)
+                .build();
+        return new ResponseEntity<>(errorResponse, errorResponse.getHttpStatus());
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    private ResponseEntity<BaseResponse> handleCeoLoginException(NotFoundException exception) {
+        BaseResponse errorResponse = BaseResponse.builder()
+                .message(exception.getLocalizedMessage())
+                .success(false)
+                .httpStatus(HttpStatus.BAD_REQUEST)
                 .build();
         return new ResponseEntity<>(errorResponse, errorResponse.getHttpStatus());
     }
