@@ -21,12 +21,10 @@ public class Reservation {
 
     @Column(name = "date")
     @NotNull
-    @NotBlank
-    private Date date;
+    private String date;
 
     @Column(name = "people")
     @NotNull
-    @NotBlank
     private Integer people;
 
     @ManyToOne

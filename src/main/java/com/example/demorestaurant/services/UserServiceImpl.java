@@ -132,7 +132,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     // Other methods
-    private User FindAndEnsureExists(Long id){
+    public User FindAndEnsureExists(Long id){
         return repository.findById(id).orElseThrow(() -> new RuntimeException("ID NOT FOUND"));
     }
 
