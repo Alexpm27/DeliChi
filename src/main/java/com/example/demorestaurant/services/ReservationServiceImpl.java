@@ -3,17 +3,17 @@ package com.example.demorestaurant.services;
 import com.example.demorestaurant.controllers.dtos.request.CreateReservationRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateReservationRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
-import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
-import com.example.demorestaurant.controllers.dtos.responses.CreateReservationResponse;
-import com.example.demorestaurant.controllers.dtos.responses.GetReservationResponse;
-import com.example.demorestaurant.controllers.dtos.responses.UpdateReservationResponse;
+import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.Reservation;
+import com.example.demorestaurant.entities.projections.ReservationProjection;
 import com.example.demorestaurant.repositories.IReservationRepository;
 import com.example.demorestaurant.services.interfaces.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -60,6 +60,19 @@ public class ReservationServiceImpl implements IReservationService {
         repository.delete(FindAndEnsureExist(id));
     }
 
+    @Override
+    public BaseResponse ListReservationByRestaurantId(Long restaurantId) {
+        List<ReservationProjection> reservation = repository.ListReservationByRestaurantId(restaurantId);
+        List<GetReservationByRestaurantIdResponse> responses = reservation.stream()
+                .map(this::from)
+                .collect(Collectors.toList());
+        return BaseResponse.builder()
+                .data(responses)
+                .message("reservation list by teacher id")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
+    }
+
     private CreateReservationResponse from(Reservation reservation){
         CreateReservationResponse response = new CreateReservationResponse();
         response.setId(reservation.getId());
@@ -98,6 +111,16 @@ public class ReservationServiceImpl implements IReservationService {
         response.setPeople(reservation.getPeople());
         response.setRestaurant_id(reservation.getId());
         response.setUser_id(reservation.getId());
+        return response;
+    }
+
+    //from ReservationProyection to GetReservationByRestaurantIdResponse
+    private GetReservationByRestaurantIdResponse from(ReservationProjection reservation){
+        GetReservationByRestaurantIdResponse response = new GetReservationByRestaurantIdResponse();
+        response.setName(reservation.getName());
+        response.setLast_name(reservation.getLast_name());
+        response.setDate(reservation.getDate());
+        response.setPeople(reservation.getPeople());
         return response;
     }
 

@@ -26,6 +26,12 @@ public class ReservationController {
         return service.get(id);
     }
 
+    @GetMapping("reservations/restaurant/{restaurantId}")
+    public ResponseEntity<BaseResponse> ListReservationByRestaurantId(@PathVariable Long restaurantId){
+        BaseResponse baseResponse = service.ListReservationByRestaurantId(restaurantId);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
     @PutMapping("{id}")
     public ResponseEntity<BaseResponse> update(@RequestBody UpdateReservationRequest request, @PathVariable Long id){
         BaseResponse baseResponse = service.update(request, id);

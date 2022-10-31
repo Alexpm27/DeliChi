@@ -13,4 +13,6 @@ public interface IReservationService {
     BaseResponse update(UpdateReservationRequest request, Long id);
 
     void delete(Long id);
+
+    BaseResponse ListReservationByRestaurantId(Long restaurantId);
 }
