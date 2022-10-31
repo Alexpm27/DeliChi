@@ -2,6 +2,7 @@ package com.example.demorestaurant.services;
 
 
 import com.example.demorestaurant.controllers.dtos.responses.*;
+import com.example.demorestaurant.entities.User;
 import com.example.demorestaurant.entities.projections.RestaurantProjection;
 import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;

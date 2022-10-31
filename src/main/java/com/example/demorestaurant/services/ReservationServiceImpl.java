@@ -98,8 +98,9 @@ public class ReservationServiceImpl implements IReservationService {
         response.setId(reservation.getId());
         response.setDate(reservation.getDate());
         response.setPeople(reservation.getPeople());
-        response.setRestaurant_id(reservation.getId());
-        response.setUser_id(reservation.getId());
+        // Here are the changes about the returning
+        response.setRestaurant_id(reservation.getRestaurant().getId());
+        response.setUser_id(reservation.getUser().getId());
         return response;
     }
 
