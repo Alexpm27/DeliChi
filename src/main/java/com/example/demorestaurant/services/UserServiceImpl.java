@@ -36,7 +36,7 @@ public class UserServiceImpl implements IUserService {
                         .stream()
                         .map(user -> from_get(user))
                         .collect(Collectors.toList()))
-                .message("Users list by ceos id")
+                .message("Users list")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK)
                 .build();

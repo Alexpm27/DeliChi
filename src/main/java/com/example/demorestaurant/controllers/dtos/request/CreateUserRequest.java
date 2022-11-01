@@ -7,23 +7,12 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-    @Getter @Setter
+@Getter @Setter
 public class CreateUserRequest {
-
-    @Email @NotBlank
+    @Email
     private String email;
-
-    @NotBlank
     private String name;
-
-    @NotBlank
     private String last_name;
-
-    @NotBlank
     private Long phone_number;
-
-    @NotBlank @NotNull
     private String password;
-
-
 }

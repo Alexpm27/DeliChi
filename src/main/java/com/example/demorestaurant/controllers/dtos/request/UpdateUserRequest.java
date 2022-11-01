@@ -11,19 +11,14 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class UpdateUserRequest {
     @Email
-    @NotBlank
     private String email;
 
-    @NotBlank
     private String name;
 
-    @NotBlank
     private String last_name;
 
-    @NotBlank
     private Long phone_number;
 
-    @NotBlank @NotNull
     private String password;
 
 }

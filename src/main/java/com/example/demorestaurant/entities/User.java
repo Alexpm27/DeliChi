@@ -38,7 +38,7 @@ public class User {
     private String password;
 
     @Column(nullable = false, unique = true)
-    @NotBlank
+
     private Long phone_number;
 
     @OneToMany(mappedBy = "user")
