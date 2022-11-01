@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Setter @Getter
 public class UpdateCommentRequest {
-    private Date date;
+    private String date;
     private String content;
     private Integer score;
     private Long user_id;

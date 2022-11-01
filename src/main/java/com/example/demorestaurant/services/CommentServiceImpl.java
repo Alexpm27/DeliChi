@@ -6,6 +6,7 @@ import com.example.demorestaurant.controllers.dtos.request.UpdateCommentRequest;
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.CreateCommentResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetCommentResponse;
+import com.example.demorestaurant.controllers.dtos.responses.UpdateCommentResponse;
 import com.example.demorestaurant.entities.Comment;
 import com.example.demorestaurant.entities.projections.CommentProjection;
 import com.example.demorestaurant.repositories.ICommentRepository;
@@ -63,12 +64,24 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public BaseResponse updateComment(UpdateCommentRequest request, Long id) {
-        return null;
+        Comment comment = FindAndEnsureExist(id);
+        comment.setContent(request.getContent());
+        comment.setUser(userService.FindAndEnsureExists(request.getUser_id()));
+        comment.setRestaurant(restaurantService.FindRestaurantAndEnsureExist((request.getRestaurant_id())));
+        comment.setDate(request.getDate());
+        comment.setScore(request.getScore());
+
+        return BaseResponse.builder()
+                .data(from(repository.save(comment)))
+                .message("Comment updated correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 
     @Override
     public void delete(Long id) {
-
+        repository.delete(FindAndEnsureExist(id));
     }
 
     private Comment from (CreateCommentRequest request){
