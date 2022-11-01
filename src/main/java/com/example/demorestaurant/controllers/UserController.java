@@ -37,6 +37,12 @@ public class UserController {
         return service.getUserById(id);
     }
 
+    @GetMapping("reservations/user/{userId}")
+    public ResponseEntity<BaseResponse> ListReservationsByUserId(@PathVariable Long userId){
+        BaseResponse baseResponse = service.ListReservationsByUserId(userId);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
     @PutMapping("{id}")
     public ResponseEntity<BaseResponse> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequest request){
         BaseResponse baseResponse = service.updateUser(id, request);

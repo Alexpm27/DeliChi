@@ -20,4 +20,6 @@ public interface IUserService {
     BaseResponse updateUser (Long id, UpdateUserRequest request);
 
     void deleteUser (Long id);
+
+    BaseResponse ListReservationsByUserId(Long userId);
 }

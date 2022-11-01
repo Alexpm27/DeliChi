@@ -2,11 +2,9 @@ package com.example.demorestaurant.services;
 
 import com.example.demorestaurant.controllers.dtos.request.CreateUserRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateUserRequest;
-import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
-import com.example.demorestaurant.controllers.dtos.responses.CreateUserResponse;
-import com.example.demorestaurant.controllers.dtos.responses.GetUserResponse;
-import com.example.demorestaurant.controllers.dtos.responses.UpdateUserResponse;
+import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.User;
+import com.example.demorestaurant.entities.projections.UserReservationsProjection;
 import com.example.demorestaurant.repositories.IUserRepository;
 import com.example.demorestaurant.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +76,28 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void deleteUser(Long id) {
         repository.delete(FindAndEnsureExists(id));
+    }
+
+    @Override
+    public BaseResponse ListReservationsByUserId(Long userId) {
+        List<UserReservationsProjection> resrvarions = repository.ListReservationsByUserId(userId);
+        List<GetUserReservationsResponse> responses = resrvarions.stream()
+                .map(this::from)
+                .collect(Collectors.toList());
+        return BaseResponse.builder()
+                .data(responses)
+                .message("reservation list by user id")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
+    }
+
+    //from UserReservationsProjection to GetUserReservationsResponse
+    private GetUserReservationsResponse from(UserReservationsProjection reservation){
+        GetUserReservationsResponse response = new GetUserReservationsResponse();
+        response.setName(reservation.getName());
+        response.setDate(reservation.getDate());
+        response.setPeople(reservation.getPeople());
+        return response;
     }
 
 
