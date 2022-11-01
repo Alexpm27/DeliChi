@@ -1,6 +1,7 @@
 package com.example.demorestaurant.controllers.advices;
 
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
+import com.example.demorestaurant.entities.exceptions.ExistingDataConflictException;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.exceptions.UpchiapasException;
 //import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
@@ -168,6 +169,16 @@ public class ExceptionHandlerFactory {
                 .message(exception.getLocalizedMessage())
                 .success(false)
                 .httpStatus(HttpStatus.BAD_REQUEST)
+                .build();
+        return new ResponseEntity<>(errorResponse, errorResponse.getHttpStatus());
+    }
+
+    @ExceptionHandler(ExistingDataConflictException.class)
+    private ResponseEntity<BaseResponse> handleExistingDataConflictException(ExistingDataConflictException exception) {
+        BaseResponse errorResponse = BaseResponse.builder()
+                .message(exception.getLocalizedMessage())
+                .success(false)
+                .httpStatus(HttpStatus.CONFLICT)
                 .build();
         return new ResponseEntity<>(errorResponse, errorResponse.getHttpStatus());
     }
