@@ -13,10 +13,12 @@ import com.example.demorestaurant.repositories.ICommentRepository;
 import com.example.demorestaurant.services.interfaces.ICommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class CommentServiceImpl implements ICommentService {
 
     @Autowired
@@ -30,8 +32,9 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public BaseResponse createComment(CreateCommentRequest request) {
+        Comment comment = from(request);
         return BaseResponse.builder()
-                .data(from(repository.save(from(request))))
+                .data(from(repository.save(comment)))
                 .message("Comment created correctly")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
@@ -66,8 +69,6 @@ public class CommentServiceImpl implements ICommentService {
     public BaseResponse updateComment(UpdateCommentRequest request, Long id) {
         Comment comment = FindAndEnsureExist(id);
         comment.setContent(request.getContent());
-        comment.setUser(userService.FindAndEnsureExists(request.getUser_id()));
-        comment.setRestaurant(restaurantService.FindRestaurantAndEnsureExist((request.getRestaurant_id())));
         comment.setDate(request.getDate());
         comment.setScore(request.getScore());
 

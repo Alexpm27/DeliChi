@@ -27,7 +27,6 @@ public class Comment {
     private String content;
 
     @Column(nullable = false)
-    @NotBlank
     private Integer score;
 
     @ManyToOne

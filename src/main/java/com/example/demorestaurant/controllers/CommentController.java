@@ -1,6 +1,7 @@
 package com.example.demorestaurant.controllers;
 
 import com.example.demorestaurant.controllers.dtos.request.CreateCommentRequest;
+import com.example.demorestaurant.controllers.dtos.request.UpdateCommentRequest;
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.services.interfaces.ICommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,14 @@ public class CommentController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<BaseResponse> updateComment
+    public ResponseEntity<BaseResponse> updateComment(@RequestBody UpdateCommentRequest request, @PathVariable Long id){
+        BaseResponse baseResponse = service.updateComment(request, id);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable Long id){
+        service.delete(id);
+    }
 
 }
