@@ -46,8 +46,6 @@ public class UserServiceImpl implements IUserService {
     @Override
     public BaseResponse createUser(CreateUserRequest request) {
         User user = from(request);
-
-        User save = repository.save(from(request));
         return BaseResponse.builder()
                 .data(from_create(repository.save(user)))
                 .message("User created correctly")
