@@ -49,7 +49,7 @@ public class UserServiceImpl implements IUserService {
 
         User save = repository.save(from(request));
         return BaseResponse.builder()
-                .data(repository.save(user))
+                .data(from_create(repository.save(user)))
                 .message("User created correctly")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
@@ -65,7 +65,7 @@ public class UserServiceImpl implements IUserService {
         user.setPhone_number(request.getPhone_number());
 
         return BaseResponse.builder()
-                .data(repository.save(user))
+                .data(from_upd(repository.save(user)))
                 .message("User updated correctly")
                 .httpStatus(HttpStatus.OK)
                 .success(Boolean.TRUE)
