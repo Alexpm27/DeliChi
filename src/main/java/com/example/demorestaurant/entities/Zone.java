@@ -1,6 +1,5 @@
 package com.example.demorestaurant.entities;
 
-import com.example.demorestaurant.entities.pivotes.ZoneRestaurant;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +24,6 @@ public class Zone {
     private String name;
 
     @OneToMany(mappedBy = "zone")
-    private List<ZoneRestaurant> zoneRestaurants;
+    private List<Restaurant> restaurants;
 
 }

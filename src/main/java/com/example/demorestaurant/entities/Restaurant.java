@@ -1,6 +1,5 @@
 package com.example.demorestaurant.entities;
 
-import com.example.demorestaurant.entities.pivotes.ZoneRestaurant;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,11 +47,11 @@ public class Restaurant {
     @ManyToOne
     private Ceo ceo;
 
-    @OneToMany(mappedBy = "restaurant")
-    private List<Comment> comments;
+    @ManyToOne
+    private Zone zone;
 
     @OneToMany(mappedBy = "restaurant")
-    private List<ZoneRestaurant> restaurantZones;
+    private List<Comment> comments;
 
     @OneToMany(mappedBy = "restaurant")
     private List<Reservation> reservations;
