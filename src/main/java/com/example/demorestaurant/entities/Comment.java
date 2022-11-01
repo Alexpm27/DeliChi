@@ -13,21 +13,20 @@ import java.util.Date;
 @Setter
 @Table(name = "comments")
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "date")
-    @NotNull
+    @Column(nullable = false)
     @NotBlank
-    private Date date;
+    private String date;
 
-    @Column(name = "content")
+    @Column(length = 500)
     private String content;
 
-    @Column(name = "score")
-    @NotNull
+    @Column(nullable = false)
     @NotBlank
     private Integer score;
 
@@ -36,4 +35,5 @@ public class Comment {
 
     @ManyToOne
     private Restaurant restaurant;
+
 }

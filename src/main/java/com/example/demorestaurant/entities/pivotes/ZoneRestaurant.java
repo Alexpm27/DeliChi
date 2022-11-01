@@ -6,15 +6,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "zones_restaurants")
 @Getter
 @Setter
+@Table(name = "zones_restaurants")
 public class ZoneRestaurant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(nullable = false, unique = true)
     private Long id;
 
     @ManyToOne
@@ -22,4 +24,5 @@ public class ZoneRestaurant {
 
     @ManyToOne
     private Restaurant restaurant;
+
 }

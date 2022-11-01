@@ -16,15 +16,14 @@ public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "date")
-    @NotNull
+    @Column(nullable = false)
+    @NotBlank
     private String date;
 
-    @Column(name = "people")
-    @NotNull
+    @Column(nullable = false, length = 255)
     private Integer people;
 
     @ManyToOne
@@ -32,6 +31,7 @@ public class Reservation {
 
     @ManyToOne
     private User user;
+
 }
 
 

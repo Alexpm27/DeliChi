@@ -10,8 +10,9 @@ import java.util.List;
 @Setter
 public class CeoResponse {
  private Long id;
- private String email;
- private String last_name;
  private String name;
+ private String first_surname;
+ private String second_surname;
+ private String email;
  private Long phone_number;
 }

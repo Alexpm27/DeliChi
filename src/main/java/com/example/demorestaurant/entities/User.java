@@ -17,32 +17,28 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "name")
-    @NotNull
+    @Column(nullable = false, length = 255)
     @NotBlank
     private String name;
 
-    @Column(name = "last_name")
-    @NotNull
+    @Column(nullable = false, length = 255)
     @NotBlank
     private String last_name;
 
-    @Column(name = "email")
-    @NotNull
+    @Column(nullable = false, unique = true, length = 255)
     @NotBlank
     @Email
     private String email;
 
-    @Column(name = "passwword")
-    @NotNull
+    @Column(nullable = false, length = 255)
     @NotBlank
     private String password;
 
-    @Column(name = "phone_number")
-    @NotNull
+    @Column(nullable = false, unique = true)
+    @NotBlank
     private Long phone_number;
 
     @OneToMany(mappedBy = "user")
@@ -50,4 +46,5 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Reservation> reservations;
+
 }

@@ -7,10 +7,14 @@ import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.CreateCommentResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetCommentResponse;
 import com.example.demorestaurant.entities.Comment;
+import com.example.demorestaurant.entities.projections.CommentProjection;
 import com.example.demorestaurant.repositories.ICommentRepository;
 import com.example.demorestaurant.services.interfaces.ICommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommentServiceImpl implements ICommentService {
 
@@ -26,7 +30,7 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public BaseResponse createComment(CreateCommentRequest request) {
         return BaseResponse.builder()
-                .data(from(repository.save(from(request)), request)) // Returning the saved user and request
+                .data(from(repository.save(from(request))))
                 .message("Comment created correctly")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
@@ -36,13 +40,25 @@ public class CommentServiceImpl implements ICommentService {
     public BaseResponse getCommentById(Long id) {
         return BaseResponse.builder()
                 .data(from_get(FindAndEnsureExist(id)))
+                .message("comment by id")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
     public BaseResponse listAllCommentByRestaurantId(Long restaurantId) {
-        return BaseResponse.builder().build();
+        return BaseResponse.builder()
+                .data(
+                        repository.listAllCommentsByRestaurantId(restaurantId)
+                                .stream()
+                                .map(this::from)
+                                .map(this::from_get)
+                                .collect(Collectors.toList())
+                )
+                .message("list all comments from a restaurant")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 
     @Override
@@ -65,33 +81,23 @@ public class CommentServiceImpl implements ICommentService {
         return comment;
     }
 
-    private CreateCommentResponse from (Comment comment, CreateCommentRequest request){
+    private CreateCommentResponse from (Comment comment){
         CreateCommentResponse response = new CreateCommentResponse();
-
         response.setId(comment.getId());
         response.setDate(comment.getDate());
         response.setContent(comment.getContent());
         response.setScore(comment.getScore());
-
-        // This response need to return a Long id, but the methods in the injection only return a User, so I decided to return with the request methods
-        // We can use the request id because this method only be used when we are sure about the request data. I think so
-
-        // Supestamente ya quedo, por cualquier error, aqui esta el responsable >:3
         response.setRestaurant_id(comment.getRestaurant().getId());
         response.setUser_id(comment.getUser().getId());
-
         return response;
     }
 
     private GetCommentResponse from_get(Comment comment){
         GetCommentResponse response = new GetCommentResponse();
-
         response.setId(comment.getId());
         response.setDate(comment.getDate());
         response.setContent(comment.getContent());
         response.setScore(comment.getScore());
-
-        // Supestamente ya quedo, por cualquier error, aqui esta el responsable >:3
         response.setRestaurant_id(comment.getRestaurant().getId());
         response.setUser_id(comment.getUser().getId());
         return response;
@@ -99,6 +105,17 @@ public class CommentServiceImpl implements ICommentService {
 
     private Comment FindAndEnsureExist(Long id){
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+    }
+
+    private Comment from(CommentProjection commentProjection){
+        Comment comment = new Comment();
+        comment.setId(commentProjection.getId());
+        comment.setDate(commentProjection.getDate());
+        comment.setContent(commentProjection.getContent());
+        comment.setScore(commentProjection.getScore());
+        comment.setUser(userService.FindAndEnsureExists(commentProjection.getId_user()));
+        comment.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(commentProjection.getId_restaurant()));
+        return comment;
     }
 
 }

@@ -14,34 +14,35 @@ import java.util.List;
 @Setter
 @Table(name = "ceos")
 public class Ceo {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "name")
-    @NotNull
+    @Column(nullable = false, length = 255)
     @NotBlank
     private String name;
 
-    @Column(name = "last_name")
-    @NotNull
+    @Column(nullable = false, length = 255)
     @NotBlank
-    private String last_name;
+    private String first_surname;
 
-    @Column(name = "email")
-    @NotNull
+    @Column(nullable = false, length = 255)
+    @NotBlank
+    private String second_surname;
+
+    @Column(nullable = false, unique = true, length = 255)
     @NotBlank
     @Email
     private String email;
 
-    @Column(name = "passwword")
-    @NotNull
+    @Column(nullable = false, length = 255)
     @NotBlank
     private String password;
 
-    @Column(name = "phone_number")
-    @NotNull
+    @Column(nullable = false, unique = true)
+    @NotBlank
     private Long phone_number;
 
     @OneToMany(mappedBy = "ceo")

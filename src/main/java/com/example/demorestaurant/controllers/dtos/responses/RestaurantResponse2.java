@@ -15,6 +15,7 @@ public class RestaurantResponse2 {
     private String Schedule;
     private Long ceoId;
     private String ceoName;
-    private String ceoLast_name;
+    private String ceoFirst_surname;
+    private String ceoSecond_surname;
     private String ceoEmail;
 }

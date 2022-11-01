@@ -51,8 +51,6 @@ public class CeoServiceImpl implements ICeoService {
                 .build();
     }
 
-
-
     //update a ceo
     @Override
     public BaseResponse update(UpdateCeoRequest request, Long id) {
@@ -99,10 +97,10 @@ public class CeoServiceImpl implements ICeoService {
         GetCeoResponse response = new GetCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
-        response.setLast_name(ceo.getLast_name());
+        response.setFirst_surname(ceo.getFirst_surname());
+        response.setSecond_surname(ceo.getSecond_surname());
         response.setPhone_number(ceo.getPhone_number());
         response.setEmail(ceo.getEmail());
-        response.setPassword(ceo.getPassword());
         return response;
     }
 
@@ -135,7 +133,8 @@ public class CeoServiceImpl implements ICeoService {
     private Ceo from(CreateCeoRequest request){
         Ceo ceo = new Ceo();
         ceo.setName(request.getName());
-        ceo.setLast_name(request.getLast_name());
+        ceo.setFirst_surname(request.getFirst_surname());
+        ceo.setSecond_surname(request.getSecond_surname());
         ceo.setPhone_number(request.getPhone_number());
         ceo.setEmail(request.getEmail());
         ceo.setPassword(request.getPassword());
@@ -147,7 +146,8 @@ public class CeoServiceImpl implements ICeoService {
         CreateCeoResponse response = new CreateCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
-        response.setLast_name(ceo.getLast_name());
+        response.setFirst_surname(ceo.getFirst_surname());
+        response.setSecond_surname(ceo.getSecond_surname());
         response.setPhone_number(ceo.getPhone_number());
         response.setEmail(ceo.getEmail());
         return response;
@@ -167,7 +167,8 @@ public class CeoServiceImpl implements ICeoService {
         Ceo response = new Ceo();
         response.setEmail(ceoProjection.getEmail());
         response.setName(ceoProjection.getName());
-        response.setLast_name(ceoProjection.getLast_name());
+        response.setFirst_surname(ceoProjection.getFirst_surname());
+        response.setSecond_surname(ceoProjection.getSecond_surname());
         response.setId(ceoProjection.getId());
         response.setPhone_number(ceoProjection.getPhone_number());
         response.setRestaurants(repository
@@ -183,7 +184,8 @@ public class CeoServiceImpl implements ICeoService {
         CeoResponse response = new CeoResponse();
         response.setEmail(ceo.getEmail());
         response.setName(ceo.getName());
-        response.setLast_name(ceo.getLast_name());
+        response.setFirst_surname(ceo.getFirst_surname());
+        response.setSecond_surname(ceo.getSecond_surname());
         response.setId(ceo.getId());
         response.setPhone_number(ceo.getPhone_number());
         return response;
@@ -194,8 +196,8 @@ public class CeoServiceImpl implements ICeoService {
         UpdateCeoResponse response = new UpdateCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
-        response.setLast_name(ceo.getLast_name());
-        response.setPhone_number(ceo.getPhone_number());
+        response.setFirst_surname(ceo.getFirst_surname());
+        response.setSecond_surname(ceo.getSecond_surname());
         response.setEmail(ceo.getEmail());
         return response;
     }
@@ -205,18 +207,33 @@ public class CeoServiceImpl implements ICeoService {
         Ceo ceo = FindAndEnsureExist(id);
         if(request.getName().length() == 0 || request.getName() == null || Objects.equals(request.getName(), "")) {
             ceo.setName(ceo.getName());
+        }else {
+            ceo.setName(request.getName());
         }
         if(request.getPhone_number() == null || request.getPhone_number() == 0) {
             ceo.setPhone_number(ceo.getPhone_number());
+        }else {
+            ceo.setPhone_number(request.getPhone_number());
         }
         if(request.getEmail().length() == 0 || request.getEmail() == null || Objects.equals(request.getEmail(), "")) {
             ceo.setEmail(ceo.getEmail());
+        }else {
+            ceo.setEmail(request.getEmail());
         }
         if(request.getPassword().length() == 0 || request.getPassword() == null || Objects.equals(request.getPassword(), "")) {
             ceo.setPassword(ceo.getPassword());
+        }else {
+            ceo.setPassword(request.getPassword());
         }
-        if(request.getLast_name().length() == 0 || request.getLast_name() == null || Objects.equals(request.getLast_name(), "")) {
-            ceo.setLast_name(ceo.getLast_name());
+        if(request.getFirst_surname().length() == 0 || request.getFirst_surname() == null || Objects.equals(request.getFirst_surname(), "")) {
+            ceo.setFirst_surname(ceo.getFirst_surname());
+        }else {
+            ceo.setFirst_surname(request.getFirst_surname());
+        }
+        if(request.getSecond_surname().length() == 0 || request.getSecond_surname() == null || Objects.equals(request.getSecond_surname(), "")) {
+            ceo.setSecond_surname(ceo.getSecond_surname());
+        }else {
+            ceo.setSecond_surname(request.getSecond_surname());
         }
         return ceo;
     }
@@ -245,7 +262,8 @@ public class CeoServiceImpl implements ICeoService {
         response.setKitchent(restaurant.getKitchen());
         response.setCeoId(fromToCeoResponse(restaurant.getCeo()).getId());
         response.setCeoName(fromToCeoResponse(restaurant.getCeo()).getName());
-        response.setCeoLast_name(fromToCeoResponse(restaurant.getCeo()).getLast_name());
+        response.setCeoFirst_surname(fromToCeoResponse(restaurant.getCeo()).getFirst_surname());
+        response.setCeoSecond_surname(fromToCeoResponse(restaurant.getCeo()).getSecond_surname());
         response.setCeoEmail(fromToCeoResponse(restaurant.getCeo()).getEmail());
         return response;
     }

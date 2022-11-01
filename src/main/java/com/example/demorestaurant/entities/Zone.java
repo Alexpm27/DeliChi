@@ -14,16 +14,17 @@ import java.util.List;
 @Setter
 @Table(name = "zones")
 public class Zone {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "name")
-    @NotNull
+    @Column(nullable = false, length = 255)
     @NotBlank
     private String name;
 
     @OneToMany(mappedBy = "zone")
     private List<ZoneRestaurant> zoneRestaurants;
+
 }

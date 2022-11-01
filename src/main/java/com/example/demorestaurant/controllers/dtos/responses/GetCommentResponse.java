@@ -8,7 +8,7 @@ import java.util.Date;
 @Setter @Getter
 public class GetCommentResponse {
     private Long id;
-    private Date date;
+    private String date;
     private Integer score;
     private Long user_id;
     private String content;
