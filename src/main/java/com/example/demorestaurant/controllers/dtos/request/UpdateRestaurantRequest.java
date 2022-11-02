@@ -12,5 +12,5 @@ public class UpdateRestaurantRequest {
     private String banner;
     private Long phone_number;
     private String schedule;
-    private Long ceo_id;
+    private Long zone_id;
 }

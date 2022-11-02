@@ -1,7 +1,9 @@
 package com.example.demorestaurant.services;
 
 
+import com.example.demorestaurant.controllers.dtos.request.UpdateCeoRequest;
 import com.example.demorestaurant.controllers.dtos.responses.*;
+import com.example.demorestaurant.entities.Ceo;
 import com.example.demorestaurant.entities.Image;
 import com.example.demorestaurant.entities.Zone;
 import com.example.demorestaurant.entities.projections.CommentProjection;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +53,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
         restaurant.setKitchen(request.getKitchen());
         restaurant.setPhone_number(request.getPhone_number());
         restaurant.setSchedule(request.getSchedule());
+        restaurant.setZone(zoneService.FindAndEnsureExist(request.getZone_id()));
         return from_upd(repository.save(restaurant));
     }
 
@@ -160,4 +164,5 @@ public class RestaurantServiceImpl implements IRestaurantService {
     public Restaurant FindRestaurantAndEnsureExist(Long id){
         return repository.findById(id).orElseThrow(() -> new RuntimeException("not found"));
     }
+
 }

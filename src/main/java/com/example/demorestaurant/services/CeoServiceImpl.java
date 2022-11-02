@@ -89,9 +89,6 @@ public class CeoServiceImpl implements ICeoService {
         GetCeoResponse response = new GetCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
-        response.setFirst_surname(ceo.getFirst_surname());
-        response.setSecond_surname(ceo.getSecond_surname());
-        response.setPhone_number(ceo.getPhone_number());
         response.setEmail(ceo.getEmail());
         return response;
     }
@@ -113,9 +110,6 @@ public class CeoServiceImpl implements ICeoService {
         CreateCeoResponse response = new CreateCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
-        response.setFirst_surname(ceo.getFirst_surname());
-        response.setSecond_surname(ceo.getSecond_surname());
-        response.setPhone_number(ceo.getPhone_number());
         response.setEmail(ceo.getEmail());
         return response;
     }
