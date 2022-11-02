@@ -5,9 +5,6 @@ import com.example.demorestaurant.controllers.dtos.request.GetCeoRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateCeoRequest;
 import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.Ceo;
-import com.example.demorestaurant.entities.projections.RestaurantProjection;
-
-import java.util.List;
 
 public interface ICeoService {
     BaseResponse create(CreateCeoRequest request);
@@ -19,8 +16,6 @@ public interface ICeoService {
     BaseResponse update(UpdateCeoRequest request, Long id);
 
     BaseResponse delete(Long id);
-
-    BaseResponse listAllRestaurantsByCeoId(Long ceoId);
 
     Ceo FindAndEnsureExist(Long id);
 

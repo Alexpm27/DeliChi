@@ -39,10 +39,4 @@ public class CeoController {
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
-    @GetMapping("{ceoId}/restaurants")
-    public ResponseEntity<BaseResponse> listAllRestaurantsByCeoId(@PathVariable Long ceoId){
-        BaseResponse baseResponse = service.listAllRestaurantsByCeoId(ceoId);
-        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
-    }
-
 }
