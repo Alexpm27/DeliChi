@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface IFileRepository extends JpaRepository<Image, Long> {
 
-
     @Query(value = "select images.* from images " +
             "where images.restaurant_id = :restaurant_id and images.image_type = 'images'", nativeQuery = true)
     List<FileProjection> listAllImagesByRestaurantId(Long restaurant_id);

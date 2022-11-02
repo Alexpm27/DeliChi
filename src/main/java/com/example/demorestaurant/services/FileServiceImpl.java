@@ -14,6 +14,8 @@ import com.example.demorestaurant.controllers.dtos.responses.GetCeoResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetImageResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetRestaurantResponse;
 import com.example.demorestaurant.entities.Image;
+import com.example.demorestaurant.entities.Restaurant;
+import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.projections.FileProjection;
 import com.example.demorestaurant.repositories.IFileRepository;
 import com.example.demorestaurant.services.interfaces.IFileService;
@@ -124,16 +126,20 @@ public class FileServiceImpl implements IFileService {
     // Images type logo
     @Override
     public BaseResponse ListAllLogoImagesByRestaurantId(Long restaurant_id) {
-        return BaseResponse.builder()
-                .data(repository.ListAllLogoImagesByRestaurantId(restaurant_id)
-                        .stream()
-                        .map(this::from)
-                        .map(this::from_get)
-                        .collect(Collectors.toList()))
-                .message("list all logo images by restaurant")
-                .success(Boolean.TRUE)
-                .httpStatus(HttpStatus.OK)
-                .build();
+        try{
+            return BaseResponse.builder()
+                    .data(repository.ListAllLogoImagesByRestaurantId(restaurant_id)
+                            .stream()
+                            .map(this::from)
+                            .map(this::from_get)
+                            .collect(Collectors.toList()))
+                    .message("list all logo images by restaurant")
+                    .success(Boolean.TRUE)
+                    .httpStatus(HttpStatus.OK)
+                    .build();
+        }catch (Error e){
+            throw new NotFoundException("EL ERROR ESTA AQUI");
+        }
     }
 
     // Images type banner
@@ -189,12 +195,25 @@ public class FileServiceImpl implements IFileService {
     // projection to Image
     private Image from (FileProjection projection){
         Image image = new Image();
-        image.setId(projection.getId());
-        image.setFileUrl(projection.getUrl_file());
-        image.setName(projection.getName());
-        image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(projection.getId_restaurant()));
-        image.setImage_type(projection.getImage_type());
-        return image;
+        try {
+            image.setId(projection.getId());
+            image.setFileUrl(projection.getUrl_file());
+            image.setName(projection.getName());
+            image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(a(projection)));
+            image.setImage_type(projection.getImage_type());
+            return image;
+        }catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("El error esta aqui");
+        }
+    }
+
+    private Long a (FileProjection projection){
+        try{
+            // restaurantService.FindRestaurantAndEnsureExist(projection.getId_restaurant());
+            return projection.getId_restaurant();
+        }catch (NotFoundException e){
+            throw new NotFoundException("Aquí está el error");
+        }
     }
 
     // Image to GetImageResponse
