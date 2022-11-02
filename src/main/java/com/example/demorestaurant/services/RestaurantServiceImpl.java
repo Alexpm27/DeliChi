@@ -2,7 +2,6 @@ package com.example.demorestaurant.services;
 
 
 import com.example.demorestaurant.controllers.dtos.responses.*;
-import com.example.demorestaurant.entities.User;
 import com.example.demorestaurant.entities.projections.RestaurantProjection;
 import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
@@ -21,7 +20,10 @@ public class RestaurantServiceImpl implements IRestaurantService {
     private IRestaurantRepository repository;
 
     @Autowired
-    private CeoServiceImpl service;
+    private CeoServiceImpl ceoService;
+
+    @Autowired
+    private ZoneServiceImpl zoneService;
 
     public CreateRestaurantResponse create(CreateRestaurantRequest request){
         return from(repository.save(from(request)));
@@ -94,11 +96,14 @@ public class RestaurantServiceImpl implements IRestaurantService {
     private Restaurant from(CreateRestaurantRequest request){
         Restaurant restaurant = new Restaurant();
         restaurant.setName(request.getName());
+        restaurant.setBanner(request.getBanner());
+        restaurant.setLogo(request.getLogo());
         restaurant.setAddress(request.getAddress());
         restaurant.setKitchen(request.getKitchen());
         restaurant.setPhone_number(request.getPhone_number());
         restaurant.setSchedule(request.getSchedule());
-        restaurant.setCeo(service.FindAndEnsureExist(request.getCeo_id()));
+        restaurant.setCeo(ceoService.FindAndEnsureExist(request.getCeo_id()));
+        restaurant.setZone(zoneService.FindAndEnsureExist(request.getZone_id()));
         return restaurant;
     }
     private GetRestaurantResponse from_get(Restaurant restaurant){

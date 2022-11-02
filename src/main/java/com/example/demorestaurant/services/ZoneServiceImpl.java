@@ -1,5 +1,4 @@
 package com.example.demorestaurant.services;
-
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetZoneResponse;
 import com.example.demorestaurant.entities.Zone;
@@ -48,7 +47,7 @@ public class ZoneServiceImpl implements IZoneService {
         return response;
     }
 
-    private Zone FindAndEnsureExist(Long id){
+    public Zone FindAndEnsureExist(Long id){
         return repository.findById(id).orElseThrow(()-> new RuntimeException("not found"));
     }
 
