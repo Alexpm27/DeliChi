@@ -23,6 +23,9 @@ public class Image {
     @Column(nullable = false, length = 1000)
     private String fileUrl;
 
+    @Column(nullable = false, length = 10)
+    private String image_type;
+
     @ManyToOne
     private Restaurant restaurant;
 
