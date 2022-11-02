@@ -28,6 +28,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,11 +112,12 @@ public class FileServiceImpl implements IFileService {
     // Images type images
     @Override
     public BaseResponse listAllImagesByRestaurantId(Long restaurant_id) {
+        List<FileProjection> files = repository.listAllImagesByRestaurantId(restaurant_id);
+
         return BaseResponse.builder()
-                .data(repository.listAllImagesByRestaurantId(restaurant_id)
+                .data(files
                         .stream()
                         .map(this::from)
-                        .map(this::from_get)
                         .collect(Collectors.toList()))
                 .message("list all images by restaurant")
                 .success(Boolean.TRUE)
@@ -123,33 +125,34 @@ public class FileServiceImpl implements IFileService {
                 .build();
     }
 
+
     // Images type logo
     @Override
     public BaseResponse ListAllLogoImagesByRestaurantId(Long restaurant_id) {
+        List<FileProjection> files = repository.ListAllLogoImagesByRestaurantId(restaurant_id);
         try{
             return BaseResponse.builder()
-                    .data(repository.ListAllLogoImagesByRestaurantId(restaurant_id)
+                    .data(files
                             .stream()
                             .map(this::from)
-                            .map(this::from_get)
                             .collect(Collectors.toList()))
                     .message("list all logo images by restaurant")
                     .success(Boolean.TRUE)
                     .httpStatus(HttpStatus.OK)
                     .build();
         }catch (Error e){
-            throw new NotFoundException("EL ERROR ESTA AQUI");
+            throw new NotFoundException("Not found logos");
         }
     }
 
     // Images type banner
     @Override
     public BaseResponse ListAllBannerImagesByRestaurantId(Long restaurant_id) {
+        List<FileProjection> files = repository.ListAllBannerImagesByRestaurantId(restaurant_id);
         return BaseResponse.builder()
-                .data(repository.ListAllBannerImagesByRestaurantId(restaurant_id)
+                .data(files
                         .stream()
                         .map(this::from)
-                        .map(this::from_get)
                         .collect(Collectors.toList()))
                 .message("list all banner images by restaurant")
                 .success(Boolean.TRUE)
@@ -193,21 +196,38 @@ public class FileServiceImpl implements IFileService {
     }
 
     // projection to Image
-    private Image from (FileProjection projection){
+    private GetImageResponse from (FileProjection projection){
+        GetImageResponse response = new GetImageResponse();
+        try {
+            response.setId(projection.getId());
+            response.setName(projection.getName());
+            response.setFile_Url(projection.getFile_url());
+            response.setImg_type(projection.getImage_type());
+            return response;
+        }catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("El error esta aqui");
+        }
+    }
+
+    /*
+    *     private Image from (FileProjection projection){
         Image image = new Image();
         try {
             image.setId(projection.getId());
             image.setFileUrl(projection.getUrl_file());
             image.setName(projection.getName());
-            image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(a(projection)));
+            image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(FileToLong(projection)));
             image.setImage_type(projection.getImage_type());
             return image;
         }catch (IllegalArgumentException e){
             throw new IllegalArgumentException("El error esta aqui");
         }
     }
+    *
+    */
 
-    private Long a (FileProjection projection){
+    // File projection to Long
+    private Long FileToLong (FileProjection projection){
         try{
             // restaurantService.FindRestaurantAndEnsureExist(projection.getId_restaurant());
             return projection.getId_restaurant();
@@ -221,7 +241,7 @@ public class FileServiceImpl implements IFileService {
         GetImageResponse response = new GetImageResponse();
         response.setId(image.getId());
         response.setName(image.getName());
-        response.setUrl_file(image.getFileUrl());
+        response.setFile_Url(image.getFileUrl());
         response.setImg_type(image.getImage_type());
         return response;
     }
