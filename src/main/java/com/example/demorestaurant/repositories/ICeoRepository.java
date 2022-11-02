@@ -20,6 +20,9 @@ public interface ICeoRepository extends JpaRepository<Ceo, Long> {
             "where ceos.email = :email", nativeQuery = true)
     CeoProjection getCeoByEmail(String email);
 
+    @Query(value = "select ceos.email, ceos.phone_number from ceos " +
+            "where ceos.email = :email or ceos.phone_number = :phoneNumber", nativeQuery = true)
+    CeoProjection findEmailOrPhoneNumberExists(String email, Long phoneNumber);
     /*@Query(value = "select c.id as Ceoid, c.name as CeoName, r.id as RestaurantId, r.name as RestaurantName, " +
             "r.address as RestaurantAddress, z.id as ZoneId,z.name as ZoneName, " +
             "r.phone_number as RestaurantPhoneNumber, r.kitchen as RestaurantKitchent, " +

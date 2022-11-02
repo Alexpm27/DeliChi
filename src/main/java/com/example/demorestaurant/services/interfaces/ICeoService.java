@@ -18,11 +18,12 @@ public interface ICeoService {
 
     BaseResponse update(UpdateCeoRequest request, Long id);
 
-    void delete(Long id);
+    BaseResponse delete(Long id);
 
     BaseResponse listAllRestaurantsByCeoId(Long ceoId);
 
     Ceo FindAndEnsureExist(Long id);
 
+    BaseResponse validEmailAndPhoneNumber();
     //List<RestaurantResponse> listRestaurantsFromCeoId(Long ceoId);
 }

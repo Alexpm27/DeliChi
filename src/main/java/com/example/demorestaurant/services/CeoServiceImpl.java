@@ -6,6 +6,7 @@ import com.example.demorestaurant.controllers.dtos.request.UpdateCeoRequest;
 import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.Ceo;
 import com.example.demorestaurant.entities.Restaurant;
+import com.example.demorestaurant.entities.exceptions.ExistingDataConflictException;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.projections.CeoProjection;
 import com.example.demorestaurant.entities.projections.RestaurantProjection2;
@@ -13,6 +14,7 @@ import com.example.demorestaurant.repositories.ICeoRepository;
 import com.example.demorestaurant.services.interfaces.ICeoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -25,12 +27,24 @@ public class CeoServiceImpl implements ICeoService {
 
     //create a ceo
     @Override
-    public BaseResponse create(CreateCeoRequest request) {
-        return BaseResponse.builder()
+    public BaseResponse create(CreateCeoRequest request){
+            CeoProjection emailOrPhoneNumberExists = repository.findEmailOrPhoneNumberExists(request.getEmail(), request.getPhone_number());
+            return (emailOrPhoneNumberExists == null) ?
+                 BaseResponse.builder()
                 .data(from(repository.save(from(request))))
                 .message("ceo created correctly")
                 .success(Boolean.TRUE)
-                .httpStatus(HttpStatus.OK).build();
+                .httpStatus(HttpStatus.OK).build() : validEmailAndPhoneNumber();
+    }
+
+    //valid email and phone number from ceo new
+    @Override
+    public BaseResponse validEmailAndPhoneNumber(){
+        return BaseResponse.builder()
+                .message("Data duplicated")
+                .success(Boolean.FALSE)
+                .httpStatus(HttpStatus.CONFLICT)
+                .build();
     }
 
     @Override
@@ -42,7 +56,7 @@ public class CeoServiceImpl implements ICeoService {
     @Override
     public BaseResponse get(GetCeoRequest request) {
         return BaseResponse.builder()
-                .data(fromToCeoResponse(validationCeo(request)))
+                .data(from_get(validationCeo(request)))
                 .message("access got from ceo")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK)
@@ -62,8 +76,12 @@ public class CeoServiceImpl implements ICeoService {
 
     //delete a ceo
     @Override
-    public void delete(Long id) {
-        repository.delete(FindAndEnsureExist(id));
+    public BaseResponse delete(Long ceoid) {
+        repository.delete(FindAndEnsureExist(ceoid));
+        return BaseResponse.builder()
+                .message("Ceo deleted correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     //list all restaurants by ceo id
@@ -83,14 +101,10 @@ public class CeoServiceImpl implements ICeoService {
 
     //find a ceo by id and if not find ensure an exception
     @Override
-    public Ceo FindAndEnsureExist(Long id){
-        return repository.findById(id).orElseThrow(() -> new NotFoundException("ceo not found"));
+    public Ceo FindAndEnsureExist(Long ceoid){
+        return repository.findById(ceoid).orElseThrow(() -> new NotFoundException("ceo not found"));
     }
 
-    /*@Override
-    public GetCeoResponse get(Long id) {
-        return from_get(FindAndEnsureExist(id));
-    }*/
     private GetCeoResponse from_get(Ceo ceo){
         GetCeoResponse response = new GetCeoResponse();
         response.setId(ceo.getId());
@@ -126,6 +140,7 @@ public class CeoServiceImpl implements ICeoService {
         return response;
     }
 */
+
 
     //from request to ceo
     private Ceo from(CreateCeoRequest request){
@@ -197,6 +212,7 @@ public class CeoServiceImpl implements ICeoService {
         response.setFirst_surname(ceo.getFirst_surname());
         response.setSecond_surname(ceo.getSecond_surname());
         response.setEmail(ceo.getEmail());
+        response.setPhone_number(ceo.getPhone_number());
         return response;
     }
 

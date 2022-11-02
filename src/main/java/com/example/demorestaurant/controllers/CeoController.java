@@ -27,11 +27,6 @@ public class CeoController {
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
-    /*@GetMapping("{id}")
-    public GetCeoResponse get(@PathVariable Long id){
-        return service.get(id);
-    }*/
-
     @PutMapping("{id}")
     public ResponseEntity<BaseResponse> update(@RequestBody UpdateCeoRequest request, @PathVariable Long id){
         BaseResponse baseResponse = service.update(request, id);
@@ -39,8 +34,9 @@ public class CeoController {
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable Long id){
-        service.delete(id);
+    public ResponseEntity<BaseResponse> delete(@PathVariable Long id){
+        BaseResponse baseResponse = service.delete(id);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @GetMapping("{ceoId}/restaurants")
