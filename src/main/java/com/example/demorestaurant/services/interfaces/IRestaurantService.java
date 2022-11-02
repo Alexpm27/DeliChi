@@ -9,9 +9,14 @@ import com.example.demorestaurant.controllers.dtos.responses.UpdateRestaurantRes
 
 public interface IRestaurantService {
     CreateRestaurantResponse create(CreateRestaurantRequest request);
+
     GetRestaurantResponse get(Long id);
+
     UpdateRestaurantResponse update(UpdateRestaurantRequest request, Long id);
+
     void delete(Long id);
+
     BaseResponse getRestaurantByRestaurantId(Long restaurantId);
-    BaseResponse listAllRestaurants();
+
+    BaseResponse listAllRestaurantsByCeoId(Long ceoId);
 }

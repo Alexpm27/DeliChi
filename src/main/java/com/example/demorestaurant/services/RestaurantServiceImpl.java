@@ -2,20 +2,28 @@ package com.example.demorestaurant.services;
 
 
 import com.example.demorestaurant.controllers.dtos.responses.*;
-import com.example.demorestaurant.entities.projections.RestaurantProjection;
+import com.example.demorestaurant.entities.Image;
+import com.example.demorestaurant.entities.Zone;
+import com.example.demorestaurant.entities.projections.CommentProjection;
+import com.example.demorestaurant.entities.projections.RestaurantByResturantIdProyection;
+import com.example.demorestaurant.entities.projections.ResturantByCeoIdProjection;
 import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
 import com.example.demorestaurant.entities.Restaurant;
 import com.example.demorestaurant.repositories.IRestaurantRepository;
+import com.example.demorestaurant.entities.projections.ImageProection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class RestaurantServiceImpl implements IRestaurantService {
+
     @Autowired
     private IRestaurantRepository repository;
 
@@ -51,7 +59,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
     }
 
 
-    @Override
+   @Override
     public BaseResponse getRestaurantByRestaurantId(Long restaurantId) {
         return BaseResponse.builder()
                 .data(from(repository.getRestaurantByRestaurantId(restaurantId)))
@@ -60,30 +68,56 @@ public class RestaurantServiceImpl implements IRestaurantService {
                 .httpStatus(HttpStatus.OK).build();
     }
 
+
     @Override
-    public BaseResponse listAllRestaurants() {
+    public BaseResponse listAllRestaurantsByCeoId(Long ceoId) {
+        List<ResturantByCeoIdProjection> resturants = repository.listAllRestaurantsByCeoId(ceoId);
+        List<GetRestaurantByCeoIdResponse> responses = resturants.stream()
+                .map(this::from)
+                .collect(Collectors.toList());
         return BaseResponse.builder()
-                .data(repository.listAllRestaurants()
-                        .stream()
-                        .map(this::from)
-                        .collect(Collectors.toList()))
-                .message("Restaurants list")
+                .data(responses)
+                .message("Restaurant by ceo id")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
 
-    private RestaurantResponse from(RestaurantProjection restaurant){
-        RestaurantResponse response = new RestaurantResponse();
-        response.setCeoId(restaurant.getCeoId());
-        response.setCeoName(restaurant.getCeoName());
-        response.setRestaurantId(restaurant.getRestaurantId());
-        response.setRestaurantName(restaurant.getRestaurantName());
-        response.setRestaurantAddress(restaurant.getRestaurantAddress());
-        response.setZoneId(restaurant.getZoneId());
-        response.setZoneName(restaurant.getZoneName());
-        response.setRestaurantPhoneNumber(restaurant.getRestaurantPhoneNumber());
-        response.setRestaurantKitchent(restaurant.getRestaurantKitchent());
-        response.setRestaurantSchedule(restaurant.getRestaurantSchedule());
+    private GetRestaurantByCeoIdResponse from(ResturantByCeoIdProjection resturant) {
+        GetRestaurantByCeoIdResponse response = new GetRestaurantByCeoIdResponse();
+        response.setId(resturant.getId());
+        response.setLogo(resturant.getLogo());
+        response.setName(resturant.getName());
+        response.setZone(resturant.getZone());
+        return response;
+    }
+
+    private GetRestaurantByRestaurantIdResponse from(RestaurantByResturantIdProyection restaurant){
+        GetRestaurantByRestaurantIdResponse response = new GetRestaurantByRestaurantIdResponse();
+        List<String> images= repository.listAllImages(restaurant.getId())
+                .stream()
+                .map(ImageProection::getImages)
+                .collect(Collectors.toList());
+        List<CommentResponse> comments = repository.listAllComments(restaurant.getId()).stream()
+                .map(this::from).collect(Collectors.toList());
+        response.setId(restaurant.getId());
+        response.setLogo(restaurant.getLogo());
+        response.setBanner(restaurant.getBanner());
+        response.setName(restaurant.getName());
+        response.setAddress(restaurant.getAddress());
+        response.setPhone_number(restaurant.getPhone_number());
+        response.setKitchen(restaurant.getKitchen());
+        response.setSchedule(restaurant.getSchedule());
+        response.setZone(restaurant.getZone());
+        response.setImages(images);
+        response.setComments(comments);
+        return response;
+    }
+
+    private CommentResponse from(CommentProjection comment){
+        CommentResponse response = new CommentResponse();
+        response.setContent(comment.getContent());
+        response.setDate(comment.getDate());
+        response.setScore(comment.getScore());
         return response;
     }
 

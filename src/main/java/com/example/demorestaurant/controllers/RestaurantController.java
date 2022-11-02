@@ -29,6 +29,18 @@ public class RestaurantController {
         return service.get(id);
     }
 
+    @GetMapping("restaurants/ceo/{ceoId}")
+    public ResponseEntity<BaseResponse> listAllRestaurantsByCeoId(@PathVariable Long ceoId){
+        BaseResponse baseResponse = service.listAllRestaurantsByCeoId(ceoId);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
+    @GetMapping("restaurant/{restaurantId}")
+    public ResponseEntity<BaseResponse> getRestaurantByRestaurantId(@PathVariable Long restaurantId){
+        BaseResponse baseResponse = service.getRestaurantByRestaurantId(restaurantId);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
     @PutMapping("{id}")
     public UpdateRestaurantResponse update(@RequestBody UpdateRestaurantRequest request, @PathVariable Long id){
         return service.update(request, id);
@@ -39,15 +51,4 @@ public class RestaurantController {
         service.delete(id);
     }
 
-    @GetMapping("restaurants/{restaurantId}")
-    public ResponseEntity<BaseResponse> getRestaurantByRestaurantId(@PathVariable Long restaurantId){
-        BaseResponse baseResponse = service.getRestaurantByRestaurantId(restaurantId);
-        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
-    }
-
-    @GetMapping("restaurants")
-    public ResponseEntity<BaseResponse> listAllRestaurants(){
-        BaseResponse baseResponse = service.listAllRestaurants();
-        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
-    }
 }
