@@ -16,9 +16,7 @@ import com.example.demorestaurant.entities.projections.ImageProection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +44,8 @@ public class RestaurantServiceImpl implements IRestaurantService {
     public UpdateRestaurantResponse update(UpdateRestaurantRequest request, Long id) {
         Restaurant restaurant = FindRestaurantAndEnsureExist(id);
         restaurant.setName(request.getName());
+        restaurant.setBanner(request.getBanner());
+        restaurant.setLogo(request.getLogo());
         restaurant.setAddress(request.getAddress());
         restaurant.setKitchen(request.getKitchen());
         restaurant.setPhone_number(request.getPhone_number());
