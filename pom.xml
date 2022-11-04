@@ -82,7 +82,9 @@
                     </excludes>
                 </configuration>
             </plugin>
+
         </plugins>
+        <finalName>delichi</finalName>
     </build>
 
 </project>

@@ -1,6 +1,6 @@
 package com.example.demorestaurant.entities.projections;
 
-public interface ResturantByCeoIdProjection {
+public interface ResturantProjection {
     Long getId();
     String getLogo();
     String getName();

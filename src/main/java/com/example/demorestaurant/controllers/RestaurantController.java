@@ -35,6 +35,12 @@ public class RestaurantController {
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
+    @GetMapping("restaurants/name/{name}")
+    public ResponseEntity<BaseResponse> listAllRestaurantsByName(@PathVariable String name){
+        BaseResponse baseResponse = service.listAllRestaurantsByName(name);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
     @GetMapping("restaurant/{restaurantId}")
     public ResponseEntity<BaseResponse> getRestaurantByRestaurantId(@PathVariable Long restaurantId){
         BaseResponse baseResponse = service.getRestaurantByRestaurantId(restaurantId);

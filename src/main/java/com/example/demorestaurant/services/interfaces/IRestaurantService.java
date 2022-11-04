@@ -19,4 +19,6 @@ public interface IRestaurantService {
     BaseResponse getRestaurantByRestaurantId(Long restaurantId);
 
     BaseResponse listAllRestaurantsByCeoId(Long ceoId);
+
+    BaseResponse listAllRestaurantsByName(String name);
 }
