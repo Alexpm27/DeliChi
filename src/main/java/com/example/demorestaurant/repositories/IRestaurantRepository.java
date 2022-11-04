@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -18,6 +19,8 @@ public interface IRestaurantRepository extends JpaRepository<Restaurant, Long> {
             "inner join zones on restaurants.zone_id = zones.id " +
             "where c.id = :ceoId", nativeQuery = true)
     List<ResturantProjection> listAllRestaurantsByCeoId(Long ceoId);
+
+    Optional<List<ResturantProjection>> getAllByCeo_Id(Long id);
 
     @Query(value = "select restaurants.id, restaurants.banner, restaurants.logo, restaurants.name, " +
             "restaurants.address, restaurants.phone_number, " +

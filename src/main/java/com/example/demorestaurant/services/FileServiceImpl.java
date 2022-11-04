@@ -209,23 +209,6 @@ public class FileServiceImpl implements IFileService {
         }
     }
 
-    /*
-    *     private Image from (FileProjection projection){
-        Image image = new Image();
-        try {
-            image.setId(projection.getId());
-            image.setFileUrl(projection.getUrl_file());
-            image.setName(projection.getName());
-            image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(FileToLong(projection)));
-            image.setImage_type(projection.getImage_type());
-            return image;
-        }catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("El error esta aqui");
-        }
-    }
-    *
-    */
-
     // File projection to Long
     private Long FileToLong (FileProjection projection){
         try{

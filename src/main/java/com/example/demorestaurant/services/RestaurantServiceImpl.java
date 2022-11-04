@@ -2,6 +2,7 @@ package com.example.demorestaurant.services;
 
 
 import com.example.demorestaurant.controllers.dtos.responses.*;
+import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.projections.CommentProjection;
 import com.example.demorestaurant.entities.projections.RestaurantByResturantIdProyection;
 import com.example.demorestaurant.entities.projections.ResturantProjection;
@@ -12,6 +13,7 @@ import com.example.demorestaurant.entities.Restaurant;
 import com.example.demorestaurant.repositories.IRestaurantRepository;
 import com.example.demorestaurant.entities.projections.ImageProection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -70,7 +72,7 @@ public class RestaurantServiceImpl implements IRestaurantService {
 
     @Override
     public BaseResponse listAllRestaurantsByCeoId(Long ceoId) {
-        List<ResturantProjection> restaurants = repository.listAllRestaurantsByCeoId(ceoId);
+        List<ResturantProjection> restaurants = repository.getAllByCeo_Id(ceoId).orElseThrow();
         List<GetRestaurantByCeoIdResponse> responses = restaurants.stream()
                 .map(this::from)
                 .collect(Collectors.toList());
