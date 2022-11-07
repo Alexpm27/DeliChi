@@ -24,4 +24,6 @@ public interface IFileRepository extends JpaRepository<Image, Long> {
             "where images.restaurant_id = :restaurant_id and images.image_type = 'banner'", nativeQuery = true)
     List<FileProjection> ListAllBannerImagesByRestaurantId(Long restaurant_id);
 
+
+
 }

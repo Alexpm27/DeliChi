@@ -12,4 +12,7 @@ public interface IFileService {
     BaseResponse ListAllLogoImagesByRestaurantId(Long restaurant_id);
 
     BaseResponse ListAllBannerImagesByRestaurantId(Long restaurant_id);
+
+    Boolean ValidateFileExtension(MultipartFile file);
+
 }

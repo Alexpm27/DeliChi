@@ -16,9 +16,11 @@ import com.example.demorestaurant.controllers.dtos.responses.GetRestaurantRespon
 import com.example.demorestaurant.entities.Image;
 import com.example.demorestaurant.entities.Restaurant;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
+import com.example.demorestaurant.entities.exceptions.NotValidException;
 import com.example.demorestaurant.entities.projections.FileProjection;
 import com.example.demorestaurant.repositories.IFileRepository;
 import com.example.demorestaurant.services.interfaces.IFileService;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -61,51 +63,57 @@ public class FileServiceImpl implements IFileService {
         GetCeoResponse ceo = ceoService.get(idCeo);
         Restaurant restaurant = restaurantService.FindRestaurantAndEnsureExist(idRestaurant);
 
-        switch (img_type){
-            case "images":
-                urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
-                        + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/restaurantImages/";
-                break;
-            case "logo":
-                urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
-                        + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/logo/";
-                break;
-            case "banner":
-                urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
-                        + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/banner/";
-                break;
+        if (ValidateFileExtension(multipartFile)){
+
+            switch (img_type){
+                case "images":
+                    urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
+                            + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/restaurantImages/";
+                    break;
+                case "logo":
+                    urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
+                            + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/logo/";
+                    break;
+                case "banner":
+                    urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
+                            + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/banner/";
+                    break;
+            }
+
+            // Create the urlDirection where the img will be uploaded
+
+            String fileUrl = "";
+
+            try {
+                File file = convertMultiPartToFile(multipartFile);
+                String filePath = urlDirection + generateFileName(multipartFile); // aded the filename to the url
+
+                fileUrl = "https://" + BUCKET_NAME + "." + ENDPOINT_URL + "/" + filePath;
+                uploadFileTos3bucket(filePath, file); // Ubication, file
+
+                image.setFileUrl(fileUrl);
+                image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(idRestaurant));
+                image.setName(generateFileName(multipartFile));
+                image.setImageType(img_type);
+
+                repository.save(image);
+
+                file.delete();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return BaseResponse.builder()
+                    .data(fileUrl)
+                    .message("Image uploaded successfully")
+                    .success(Boolean.TRUE)
+                    .httpStatus(HttpStatus.OK)
+                    .build();
+        }else {
+            throw new NotValidException("File Not Supported");
         }
 
-        // Create the urlDirection where the img will be uploaded
-
-        String fileUrl = "";
-
-        try {
-            File file = convertMultiPartToFile(multipartFile);
-            String filePath = urlDirection + generateFileName(multipartFile); // aded the filename to the url
-
-            fileUrl = "https://" + BUCKET_NAME + "." + ENDPOINT_URL + "/" + filePath;
-            uploadFileTos3bucket(filePath, file); // Ubication, file
-
-            image.setFileUrl(fileUrl);
-            image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(idRestaurant));
-            image.setName(generateFileName(multipartFile));
-            image.setImageType(img_type);
-
-            repository.save(image);
-
-            file.delete();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return BaseResponse.builder()
-                .data(fileUrl)
-                .message("Image uploaded successfully")
-                .success(Boolean.TRUE)
-                .httpStatus(HttpStatus.OK)
-                .build();
     }
 
     // Images type images
@@ -159,6 +167,16 @@ public class FileServiceImpl implements IFileService {
                 .build();
     }
 
+    @Override
+    public Boolean ValidateFileExtension(MultipartFile file) {
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (extension.equals("jpeg") || extension.equals("jpg") || extension.equals("png")){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
+    }
+
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
@@ -210,12 +228,8 @@ public class FileServiceImpl implements IFileService {
 
     // File projection to Long
     private Long FileToLong (FileProjection projection){
-        try{
             // restaurantService.FindRestaurantAndEnsureExist(projection.getId_restaurant());
             return projection.getId_restaurant();
-        }catch (NotFoundException e){
-            throw new NotFoundException("Aquí está el error");
-        }
     }
 
     // Image to GetImageResponse
@@ -227,5 +241,7 @@ public class FileServiceImpl implements IFileService {
         response.setImg_type(image.getImageType());
         return response;
     }
-    
+
+
+
 }

@@ -1,6 +1,6 @@
 package com.example.demorestaurant.controllers;
 
-import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
+import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
-import com.example.demorestaurant.controllers.dtos.responses.CreateRestaurantResponse;
-import com.example.demorestaurant.controllers.dtos.responses.GetRestaurantResponse;
-import com.example.demorestaurant.controllers.dtos.responses.UpdateRestaurantResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

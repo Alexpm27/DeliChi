@@ -15,6 +15,8 @@ import com.example.demorestaurant.repositories.IRestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,9 @@ public class RestaurantServiceImpl implements IRestaurantService {
 
     @Autowired
     private ZoneServiceImpl zoneService;
+
+    @Autowired
+    private FileServiceImpl fileService;
 
     @Override
     public BaseResponse create(CreateRestaurantRequest request, Long ceoId){
