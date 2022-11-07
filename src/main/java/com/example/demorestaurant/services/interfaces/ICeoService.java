@@ -19,6 +19,6 @@ public interface ICeoService {
 
     Ceo FindAndEnsureExist(Long id);
 
-    BaseResponse validEmailAndPhoneNumber();
+    //BaseResponse validEmailAndPhoneNumber();
     //List<RestaurantResponse> listRestaurantsFromCeoId(Long ceoId);
 }

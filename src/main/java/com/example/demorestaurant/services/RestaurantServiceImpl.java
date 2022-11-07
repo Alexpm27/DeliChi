@@ -2,18 +2,17 @@ package com.example.demorestaurant.services;
 
 
 import com.example.demorestaurant.controllers.dtos.responses.*;
+import com.example.demorestaurant.entities.Ceo;
+import com.example.demorestaurant.entities.Zone;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
-import com.example.demorestaurant.entities.projections.CommentProjection;
-import com.example.demorestaurant.entities.projections.RestaurantByResturantIdProyection;
-import com.example.demorestaurant.entities.projections.ResturantProjection;
+import com.example.demorestaurant.entities.projections.*;
+import com.example.demorestaurant.services.interfaces.ICeoService;
 import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
 import com.example.demorestaurant.entities.Restaurant;
 import com.example.demorestaurant.repositories.IRestaurantRepository;
-import com.example.demorestaurant.entities.projections.ImageProection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -31,53 +30,87 @@ public class RestaurantServiceImpl implements IRestaurantService {
     @Autowired
     private ZoneServiceImpl zoneService;
 
-    public CreateRestaurantResponse create(CreateRestaurantRequest request){
-        return from(repository.save(from(request)));
+    @Override
+    public BaseResponse create(CreateRestaurantRequest request, Long ceoId){
+        return BaseResponse.builder()
+                .data(from(repository.save(from(request, ceoId))))
+                .message("Restaurant created correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
-    public GetRestaurantResponse get(Long id) {
-        return from_get(FindRestaurantAndEnsureExist(id));
+    public BaseResponse get(Long id) {
+        return BaseResponse.builder()
+                .data(from_get(FindRestaurantAndEnsureExist(id)))
+                .message("Restaurant got correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
-    public UpdateRestaurantResponse update(UpdateRestaurantRequest request, Long id) {
+    public BaseResponse getRestaurantByRestaurantId(Long restaurantId) {
+        return BaseResponse.builder()
+                .data(from_get(from2(repository.getRestaurantById(restaurantId)
+                        .orElseThrow(()->new NotFoundException("Restaurant not found")))))
+                .message("Restaurant by restaurant id")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
+    }
+
+    @Override
+    public BaseResponse update(UpdateRestaurantRequest request, Long id) {
+        return BaseResponse.builder().data(
+                from_upd(repository.save(from(request,id))))
+                .message("Update Restaurant correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
+    }
+
+    private UpdateRestaurantResponse from_upd(Restaurant restaurant){
+        UpdateRestaurantResponse response = new UpdateRestaurantResponse();
+        response.setId(restaurant.getId());
+        response.setName(restaurant.getName());
+        response.setBanner(restaurant.getBanner());
+        response.setLogo(restaurant.getLogo());
+        response.setAddress(restaurant.getAddress());
+        response.setKitchen(restaurant.getKitchen());
+        response.setPhoneNumber(restaurant.getPhoneNumber());
+        response.setSchedule(restaurant.getSchedule());
+        response.setZone(zoneService.FindAndEnsureExist(restaurant.getZone().getId()).getName());
+        return response;
+    }
+
+    private Restaurant from(UpdateRestaurantRequest request, Long id){
         Restaurant restaurant = FindRestaurantAndEnsureExist(id);
         restaurant.setName(request.getName());
         restaurant.setBanner(request.getBanner());
         restaurant.setLogo(request.getLogo());
         restaurant.setAddress(request.getAddress());
         restaurant.setKitchen(request.getKitchen());
-        restaurant.setPhone_number(request.getPhone_number());
+        restaurant.setPhoneNumber(request.getPhoneNumber());
         restaurant.setSchedule(request.getSchedule());
-        restaurant.setZone(zoneService.FindAndEnsureExist(request.getZone_id()));
-        return from_upd(repository.save(restaurant));
+        restaurant.setZone(zoneService.FindAndEnsureExist(request.getZoneId()));
+        return restaurant;
     }
 
     @Override
-    public void delete(Long id) {
+    public BaseResponse delete(Long id) {
         repository.delete(FindRestaurantAndEnsureExist(id));
-    }
-
-
-   @Override
-    public BaseResponse getRestaurantByRestaurantId(Long restaurantId) {
         return BaseResponse.builder()
-                .data(from(repository.getRestaurantByRestaurantId(restaurantId)))
-                .message("Restaurant by restaurant id")
+                .message("Restaurant deleted correctly")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
 
-
     @Override
     public BaseResponse listAllRestaurantsByCeoId(Long ceoId) {
-        List<ResturantProjection> restaurants = repository.getAllByCeo_Id(ceoId).orElseThrow();
-        List<GetRestaurantByCeoIdResponse> responses = restaurants.stream()
-                .map(this::from)
-                .collect(Collectors.toList());
+        List<RestaurantProjection> restaurants = repository.findAllByCeoId(ceoId)
+                .orElseThrow(()->new NotFoundException("List of restaurants not found"));
         return BaseResponse.builder()
-                .data(responses)
+                .data(restaurants.stream()
+                        .map(this::from)
+                        .collect(Collectors.toList()))
                 .message("Restaurant list by ceo id")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
@@ -85,23 +118,50 @@ public class RestaurantServiceImpl implements IRestaurantService {
 
     @Override
     public BaseResponse listAllRestaurantsByName(String name) {
-        List<ResturantProjection> restaurants = repository.listAllRestaurantsByName(name);
-        List<GetRestaurantByCeoIdResponse> responses = restaurants.stream()
-                .map(this::from)
-                .collect(Collectors.toList());
+        List<RestaurantProjection> restaurants = repository.findAllByName(name)
+                .orElseThrow(()->new NotFoundException("list of restaurants not fount"));
+
         return BaseResponse.builder()
-                .data(responses)
+                .data(restaurants.stream()
+                        .map(this::from)
+                        .collect(Collectors.toList())
+                )
                 .message("Restaurant list by her name")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
 
-    private GetRestaurantByCeoIdResponse from(ResturantProjection restaurant) {
+    @Override
+    public List<Restaurant> listAllRestaurantsByCeoId2(Long ceoId) {
+        return repository.getRestaurantByCeo_Id(ceoId).orElseThrow(()->new NotFoundException("This ceo not have Restaurants"));
+                /*.stream()
+                .map(this::from2)
+                .collect(Collectors.toList());*/
+    }
+
+    private Restaurant from2(RestaurantProjection restaurantProjection){
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(restaurantProjection.getId());
+        restaurant.setName(restaurantProjection.getName());
+        restaurant.setLogo(restaurantProjection.getLogo());
+        restaurant.setBanner(restaurantProjection.getBanner());
+        restaurant.setKitchen(restaurantProjection.getKitchen());
+        restaurant.setPhoneNumber(restaurantProjection.getPhoneNumber());
+        restaurant.setSchedule(restaurantProjection.getSchedule());
+        restaurant.setAddress(restaurantProjection.getAddress());
+        Zone zone = zoneService.FindAndEnsureExist(restaurantProjection.getZoneId());
+        restaurant.setZone(zone);
+        Ceo ceo = ceoService.FindAndEnsureExist(restaurantProjection.getCeoId());
+        restaurant.setCeo(ceo);
+        return restaurant;
+    }
+
+    private GetRestaurantByCeoIdResponse from(RestaurantProjection restaurant) {
         GetRestaurantByCeoIdResponse response = new GetRestaurantByCeoIdResponse();
         response.setId(restaurant.getId());
         response.setLogo(restaurant.getLogo());
         response.setName(restaurant.getName());
-        response.setZone(restaurant.getZone());
+        response.setZone(zoneService.FindAndEnsureExist(restaurant.getZoneId()).getName());
         return response;
     }
 
@@ -139,40 +199,43 @@ public class RestaurantServiceImpl implements IRestaurantService {
         CreateRestaurantResponse response = new CreateRestaurantResponse();
         response.setId(restaurant.getId());
         response.setName(restaurant.getName());
+        response.setSchedule(restaurant.getSchedule());
+        response.setAddress(restaurant.getAddress());
+        response.setPhoneNumber(restaurant.getPhoneNumber());
+        response.setKitchen(restaurant.getKitchen());
+        response.setZone(restaurant.getZone().getName());
         return response;
     }
-    private Restaurant from(CreateRestaurantRequest request){
+    private Restaurant from(CreateRestaurantRequest request, Long ceoId){
         Restaurant restaurant = new Restaurant();
         restaurant.setName(request.getName());
+        restaurant.setPhoneNumber(request.getPhoneNumber());
+        restaurant.setAddress(request.getAddress());
+        restaurant.setSchedule(request.getSchedule());
+        restaurant.setZone(zoneService.FindAndEnsureExist(request.getZoneId()));
+        restaurant.setKitchen(request.getKitchen());
         restaurant.setBanner(request.getBanner());
         restaurant.setLogo(request.getLogo());
-        restaurant.setAddress(request.getAddress());
-        restaurant.setKitchen(request.getKitchen());
-        restaurant.setPhone_number(request.getPhone_number());
-        restaurant.setSchedule(request.getSchedule());
-        restaurant.setCeo(ceoService.FindAndEnsureExist(request.getCeo_id()));
-        restaurant.setZone(zoneService.FindAndEnsureExist(request.getZone_id()));
+        restaurant.setCeo(ceoService.FindAndEnsureExist(ceoId));
         return restaurant;
     }
     private GetRestaurantResponse from_get(Restaurant restaurant){
         GetRestaurantResponse response = new GetRestaurantResponse();
+        response.setId(restaurant.getId());
         response.setName(restaurant.getName());
         response.setAddress(restaurant.getAddress());
         response.setKitchen(restaurant.getKitchen());
-        response.setPhone_number(restaurant.getPhone_number());
+        response.setPhoneNumber(restaurant.getPhoneNumber());
         response.setSchedule(restaurant.getSchedule());
-        return response;
-    }
-
-    private UpdateRestaurantResponse from_upd(Restaurant restaurant){
-        UpdateRestaurantResponse response = new UpdateRestaurantResponse();
-        response.setId(restaurant.getId());
-        response.setName(restaurant.getName());
+        response.setBanner(restaurant.getBanner());
+        response.setLogo(restaurant.getLogo());
+        response.setZoneId(restaurant.getZone().getId());
+        response.setCeoId(restaurant.getCeo().getId());
         return response;
     }
 
     public Restaurant FindRestaurantAndEnsureExist(Long id){
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("not found"));
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("Restaurant Not found"));
     }
 
 }

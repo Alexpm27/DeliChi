@@ -26,7 +26,7 @@ public class User {
 
     @Column(nullable = false, length = 255)
     @NotBlank
-    private String last_name;
+    private String lastName;
 
     @Column(nullable = false, unique = true, length = 255)
     @NotBlank
@@ -39,7 +39,7 @@ public class User {
 
     @Column(nullable = false, unique = true)
 
-    private Long phone_number;
+    private Long phoneNumber;
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;

@@ -5,4 +5,7 @@ public interface CeoProjection {
     String getEmail();
     String getName();
     String getPassword();
+    String getFirstSurname();
+    String getSecondSurname();
+    Long getPhoneNumber();
 }

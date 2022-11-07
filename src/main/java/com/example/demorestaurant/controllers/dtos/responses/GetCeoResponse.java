@@ -7,5 +7,7 @@ import lombok.Setter;
 public class GetCeoResponse {
     private Long id;
     private String name;
+    private String firstSurname;
+    private String secondSurname;
     private String email;
 }

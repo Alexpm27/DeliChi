@@ -59,8 +59,8 @@ public class UserServiceImpl implements IUserService {
         User user = FindAndEnsureExists(id);
         user.setEmail(request.getEmail());
         user.setName(request.getName());
-        user.setLast_name(request.getLast_name());
-        user.setPhone_number(request.getPhone_number());
+        user.setLastName(request.getLast_name());
+        user.setPhoneNumber(request.getPhone_number());
 
         return BaseResponse.builder()
                 .data(from_upd(repository.save(user)))
@@ -107,8 +107,8 @@ public class UserServiceImpl implements IUserService {
         response.setId(user.getId());
         response.setEmail(user.getEmail());
         response.setName(user.getName());
-        response.setLast_name(user.getLast_name());
-        response.setPhone_number(user.getPhone_number());
+        response.setLast_name(user.getLastName());
+        response.setPhone_number(user.getPhoneNumber());
         return response;
     }
 
@@ -119,8 +119,8 @@ public class UserServiceImpl implements IUserService {
         response.setId(user.getId());
         response.setEmail(user.getEmail());
         response.setName(user.getName());
-        response.setLast_name(user.getLast_name());
-        response.setPhone_number(user.getPhone_number());
+        response.setLast_name(user.getLastName());
+        response.setPhone_number(user.getPhoneNumber());
         return response;
     }
 
@@ -130,8 +130,8 @@ public class UserServiceImpl implements IUserService {
         response.setId(user.getId());
         response.setEmail(user.getEmail());
         response.setName(user.getName());
-        response.setLast_name(user.getLast_name());
-        response.setPhone_number(user.getPhone_number());
+        response.setLast_name(user.getLastName());
+        response.setPhone_number(user.getPhoneNumber());
         return response;
     }
 
@@ -143,8 +143,8 @@ public class UserServiceImpl implements IUserService {
         User user = new User();
         user.setEmail(request.getEmail());
         user.setName(request.getName());
-        user.setLast_name(request.getLast_name());
-        user.setPhone_number(request.getPhone_number());
+        user.setLastName(request.getLast_name());
+        user.setPhoneNumber(request.getPhone_number());
         user.setPassword(request.getPassword());
         return user;
     }

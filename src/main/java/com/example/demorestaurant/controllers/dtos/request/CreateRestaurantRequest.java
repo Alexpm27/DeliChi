@@ -3,16 +3,27 @@ package com.example.demorestaurant.controllers.dtos.request;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Getter @Setter
 public class CreateRestaurantRequest {
+    @NotNull
+    @NotBlank
     private String name;
+    @NotNull
+    private Long phoneNumber;
+    @NotNull
+    @NotBlank
+    private String address;
+    @NotNull
+    @NotBlank
+    private String schedule;
+    @NotNull
+    private Long zoneId;
+    @NotNull
+    @NotBlank
+    private String kitchen;
     private String logo;
     private String banner;
-    private String address;
-    private String kitchen;
-    private Long phone_number;
-    private String schedule;
-    private Long ceo_id;
-    private Long zone_id;
-
 }

@@ -5,8 +5,9 @@ import lombok.Setter;
 
 @Getter @Setter
 public class GetReservationByRestaurantIdResponse {
-    private String name;
-    private String last_name;
+    private Long id;
     private String date;
     private Integer people;
+    private Long restaurantId;
+    private Long userId;
 }

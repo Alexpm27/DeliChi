@@ -5,6 +5,7 @@ import com.example.demorestaurant.controllers.dtos.request.UpdateReservationRequ
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.Reservation;
+import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.projections.ReservationProjection;
 import com.example.demorestaurant.repositories.IReservationRepository;
 import com.example.demorestaurant.services.interfaces.IReservationService;
@@ -62,7 +63,7 @@ public class ReservationServiceImpl implements IReservationService {
 
     @Override
     public BaseResponse ListReservationByRestaurantId(Long restaurantId) {
-        List<ReservationProjection> reservation = repository.ListReservationByRestaurantId(restaurantId);
+        List<ReservationProjection> reservation = repository.findAllByRestaurant_Id(restaurantId).orElseThrow(()->new NotFoundException("list reservation not found"));
         List<GetReservationByRestaurantIdResponse> responses = reservation.stream()
                 .map(this::from)
                 .collect(Collectors.toList());
@@ -118,8 +119,9 @@ public class ReservationServiceImpl implements IReservationService {
     //from ReservationProyection to GetReservationByRestaurantIdResponse
     private GetReservationByRestaurantIdResponse from(ReservationProjection reservation){
         GetReservationByRestaurantIdResponse response = new GetReservationByRestaurantIdResponse();
-        response.setName(reservation.getName());
-        response.setLast_name(reservation.getLast_name());
+        response.setId(reservation.getId());
+        response.setUserId(reservation.getUser_Id());
+        response.setRestaurantId(reservation.getRestaurantId());
         response.setDate(reservation.getDate());
         response.setPeople(reservation.getPeople());
         return response;

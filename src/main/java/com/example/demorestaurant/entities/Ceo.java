@@ -25,12 +25,10 @@ public class Ceo {
     private String name;
 
     @Column(nullable = false, length = 255)
-    @NotBlank
-    private String first_surname;
+    private String firstSurname;
 
-    @Column(nullable = false, length = 255)
-    @NotBlank
-    private String second_surname;
+    @Column(nullable = true, length = 255)
+    private String secondSurname;
 
     @Column(nullable = false, unique = true, length = 255)
     @NotBlank
@@ -42,7 +40,7 @@ public class Ceo {
     private String password;
 
     @Column(nullable = false, unique = true)
-    private Long phone_number;
+    private Long phoneNumber;
 
     @OneToMany(mappedBy = "ceo")
     private List<Restaurant> restaurants;

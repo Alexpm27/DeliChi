@@ -41,7 +41,7 @@ public class Restaurant {
     private String kitchen;
 
     @Column(nullable = false, unique = true)
-    private Long phone_number;
+    private Long phoneNumber;
 
     @ManyToOne
     private Ceo ceo;

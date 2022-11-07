@@ -19,14 +19,16 @@ public class RestaurantController {
     @Autowired
     private IRestaurantService service;
 
-    @PostMapping
-    public CreateRestaurantResponse create(@RequestBody CreateRestaurantRequest request){
-        return service.create(request);
+    @PostMapping("ceo/{ceoId}")
+    public ResponseEntity<BaseResponse> create(@RequestBody CreateRestaurantRequest request, @PathVariable Long ceoId){
+        BaseResponse baseResponse = service.create(request, ceoId);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @GetMapping("{id}")
-    public GetRestaurantResponse get(@PathVariable Long id){
-        return service.get(id);
+    public ResponseEntity<BaseResponse>  get(@PathVariable Long id){
+        BaseResponse baseResponse = service.get(id);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @GetMapping("restaurants/ceo/{ceoId}")
@@ -48,8 +50,9 @@ public class RestaurantController {
     }
 
     @PutMapping("{id}")
-    public UpdateRestaurantResponse update(@RequestBody UpdateRestaurantRequest request, @PathVariable Long id){
-        return service.update(request, id);
+    public ResponseEntity<BaseResponse> update(@RequestBody UpdateRestaurantRequest request, @PathVariable Long id){
+        BaseResponse baseResponse = service.update(request, id);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @DeleteMapping("{id}")

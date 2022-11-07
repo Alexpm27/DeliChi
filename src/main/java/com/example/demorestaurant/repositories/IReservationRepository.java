@@ -7,14 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IReservationRepository extends JpaRepository<Reservation, Long> {
 
-    @Query(value = "select users.name, users.last_name, reservations.date, reservations.people " +
-            "from reservations " +
-            "inner join users on users.id = reservations.user_id "+
-            "where reservations.restaurant_id = :restaurantId", nativeQuery = true)
-    List<ReservationProjection> ListReservationByRestaurantId(Long restaurantId);
+    Optional<List<ReservationProjection>> findAllByRestaurant_Id(Long restaurantId);
 
 }

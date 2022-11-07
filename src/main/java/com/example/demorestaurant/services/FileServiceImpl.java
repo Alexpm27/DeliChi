@@ -59,8 +59,7 @@ public class FileServiceImpl implements IFileService {
         Image image = new Image();
         String urlDirection = "";
         GetCeoResponse ceo = ceoService.get(idCeo);
-        GetRestaurantResponse restaurant = restaurantService.get(idRestaurant);
-
+        Restaurant restaurant = restaurantService.FindRestaurantAndEnsureExist(idRestaurant);
 
         switch (img_type){
             case "images":
@@ -91,7 +90,7 @@ public class FileServiceImpl implements IFileService {
             image.setFileUrl(fileUrl);
             image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(idRestaurant));
             image.setName(generateFileName(multipartFile));
-            image.setImage_type(img_type);
+            image.setImageType(img_type);
 
             repository.save(image);
 
@@ -225,7 +224,7 @@ public class FileServiceImpl implements IFileService {
         response.setId(image.getId());
         response.setName(image.getName());
         response.setFile_Url(image.getFileUrl());
-        response.setImg_type(image.getImage_type());
+        response.setImg_type(image.getImageType());
         return response;
     }
     

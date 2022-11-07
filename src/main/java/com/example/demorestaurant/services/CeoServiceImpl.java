@@ -5,15 +5,20 @@ import com.example.demorestaurant.controllers.dtos.request.GetCeoRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateCeoRequest;
 import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.Ceo;
+import com.example.demorestaurant.entities.Restaurant;
+import com.example.demorestaurant.entities.exceptions.ExistingDataConflictException;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.projections.CeoProjection;
 import com.example.demorestaurant.repositories.ICeoRepository;
 import com.example.demorestaurant.services.interfaces.ICeoService;
+import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class CeoServiceImpl implements ICeoService {
@@ -23,28 +28,41 @@ public class CeoServiceImpl implements ICeoService {
     //create a ceo
     @Override
     public BaseResponse create(CreateCeoRequest request){
-            CeoProjection emailOrPhoneNumberExists = repository.findEmailOrPhoneNumberExists(request.getEmail(), request.getPhone_number());
-            return (emailOrPhoneNumberExists == null) ?
+        //CeoProjection emailOrPhoneNumberExists = repository.findEmailOrPhoneNumberExists(request.getEmail(), request.getPhone_number());
+           /* return (emailOrPhoneNumberExists == null) ?
                  BaseResponse.builder()
                 .data(from(repository.save(from(request))))
                 .message("ceo created correctly")
                 .success(Boolean.TRUE)
-                .httpStatus(HttpStatus.OK).build() : validEmailAndPhoneNumber();
+                .httpStatus(HttpStatus.OK).build() : validEmailAndPhoneNumber();*/
+        return BaseResponse.builder()
+                .data(from(repository.save(from(validEmailAndPhoneNumber2(request)))))
+                .message("ceo created correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     //valid email and phone number from ceo new
-    @Override
+    /*@Override
     public BaseResponse validEmailAndPhoneNumber(){
         return BaseResponse.builder()
                 .message("Data duplicated")
                 .success(Boolean.FALSE)
                 .httpStatus(HttpStatus.CONFLICT)
                 .build();
+    }*/
+
+    public CreateCeoRequest validEmailAndPhoneNumber2(CreateCeoRequest request){
+        boolean present = repository.findByEmailOrPhoneNumber(request.getEmail(), request.getPhoneNumber()).isPresent();
+        if (present){
+            throw new ExistingDataConflictException("Data Duplicated");
+        }
+        return request;
     }
 
     @Override
-    public GetCeoResponse get(Long id) {
-        return from_get(FindAndEnsureExist(id));
+    public GetCeoResponse get(Long ceoId) {
+        return from_get(FindAndEnsureExist(ceoId));
     }
 
     //get a ceo
@@ -81,14 +99,16 @@ public class CeoServiceImpl implements ICeoService {
 
     //find a ceo by id and if not find ensure an exception
     @Override
-    public Ceo FindAndEnsureExist(Long ceoid){
-        return repository.findById(ceoid).orElseThrow(() -> new NotFoundException("ceo not found"));
+    public Ceo FindAndEnsureExist(Long ceoId){
+        return repository.findById(ceoId).orElseThrow(() -> new NotFoundException("ceo not found"));
     }
 
     private GetCeoResponse from_get(Ceo ceo){
         GetCeoResponse response = new GetCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
+        response.setFirstSurname(ceo.getFirstSurname());
+        response.setSecondSurname(ceo.getSecondSurname());
         response.setEmail(ceo.getEmail());
         return response;
     }
@@ -97,9 +117,9 @@ public class CeoServiceImpl implements ICeoService {
     private Ceo from(CreateCeoRequest request){
         Ceo ceo = new Ceo();
         ceo.setName(request.getName());
-        ceo.setFirst_surname(request.getFirst_surname());
-        ceo.setSecond_surname(request.getSecond_surname());
-        ceo.setPhone_number(request.getPhone_number());
+        ceo.setFirstSurname(request.getFirstSurname());
+        ceo.setSecondSurname(request.getSecondSurname());
+        ceo.setPhoneNumber(request.getPhoneNumber());
         ceo.setEmail(request.getEmail());
         ceo.setPassword(request.getPassword());
         return ceo;
@@ -110,49 +130,56 @@ public class CeoServiceImpl implements ICeoService {
         CreateCeoResponse response = new CreateCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
+        response.setFirstSurname(ceo.getFirstSurname());
+        response.setSecondSurname(ceo.getSecondSurname());
         response.setEmail(ceo.getEmail());
         return response;
     }
 
     //validataion of Ceo
     private Ceo validationCeo(GetCeoRequest request) {
-        CeoProjection ceoProjection = repository.getCeoByEmail(request.getEmail());
-        if (ceoProjection == null || !Objects.equals(ceoProjection.getPassword(), request.getPassword())) {
+        CeoProjection ceoProjection = repository.findCeoByEmail(request.getEmail()).orElseThrow(() -> new NotFoundException("ceo not found"));
+        if (!Objects.equals(ceoProjection.getPassword(), request.getPassword())) {
             throw new NotFoundException("ceo not found");
         }
+        //return ceo;
         return fromToCeo(ceoProjection);
     }
 
     //from ceoProjection to Ceo
     private Ceo fromToCeo(CeoProjection ceoProjection){
         Ceo response = new Ceo();
-        response.setEmail(ceoProjection.getEmail());
-        response.setName(ceoProjection.getName());
         response.setId(ceoProjection.getId());
+        response.setName(ceoProjection.getName());
+        response.setFirstSurname(ceoProjection.getFirstSurname());
+        response.setSecondSurname(ceoProjection.getSecondSurname());
+        response.setEmail(ceoProjection.getEmail());
+        response.setPhoneNumber(ceoProjection.getPhoneNumber());
+        response.setPassword(ceoProjection.getPassword());
         return response;
     }
 
     //form to Ceo to CeoResponse
-    private CeoResponse fromToCeoResponse(Ceo ceo){
+    /*private CeoResponse fromToCeoResponse(Ceo ceo){
         CeoResponse response = new CeoResponse();
         response.setEmail(ceo.getEmail());
         response.setName(ceo.getName());
-        response.setFirst_surname(ceo.getFirst_surname());
-        response.setSecond_surname(ceo.getSecond_surname());
+        response.setFirst_surname(ceo.getFirstSurname());
+        response.setSecond_surname(ceo.getSecondSurname());
         response.setId(ceo.getId());
-        response.setPhone_number(ceo.getPhone_number());
+        response.setPhone_number(ceo.getPhoneNumber());
         return response;
-    }
+    }*/
 
     //from Ceo to UpdateCeoResponse
     private UpdateCeoResponse fromToUpdateCeoResponse(Ceo ceo){
         UpdateCeoResponse response = new UpdateCeoResponse();
         response.setId(ceo.getId());
         response.setName(ceo.getName());
-        response.setFirst_surname(ceo.getFirst_surname());
-        response.setSecond_surname(ceo.getSecond_surname());
+        response.setFirst_surname(ceo.getFirstSurname());
+        response.setSecond_surname(ceo.getSecondSurname());
         response.setEmail(ceo.getEmail());
-        response.setPhone_number(ceo.getPhone_number());
+        response.setPhone_number(ceo.getPhoneNumber());
         return response;
     }
 
@@ -164,10 +191,10 @@ public class CeoServiceImpl implements ICeoService {
         }else {
             ceo.setName(request.getName());
         }
-        if(request.getPhone_number() == null || request.getPhone_number() == 0) {
-            ceo.setPhone_number(ceo.getPhone_number());
+        if(request.getPhoneNumber() == null || request.getPhoneNumber() == 0) {
+            ceo.setPhoneNumber(ceo.getPhoneNumber());
         }else {
-            ceo.setPhone_number(request.getPhone_number());
+            ceo.setPhoneNumber(request.getPhoneNumber());
         }
         if(request.getEmail().length() == 0 || request.getEmail() == null || Objects.equals(request.getEmail(), "")) {
             ceo.setEmail(ceo.getEmail());
@@ -179,15 +206,15 @@ public class CeoServiceImpl implements ICeoService {
         }else {
             ceo.setPassword(request.getPassword());
         }
-        if(request.getFirst_surname().length() == 0 || request.getFirst_surname() == null || Objects.equals(request.getFirst_surname(), "")) {
-            ceo.setFirst_surname(ceo.getFirst_surname());
+        if(request.getFirstSurname().length() == 0 || request.getFirstSurname() == null || Objects.equals(request.getFirstSurname(), "")) {
+            ceo.setFirstSurname(ceo.getFirstSurname());
         }else {
-            ceo.setFirst_surname(request.getFirst_surname());
+            ceo.setFirstSurname(request.getFirstSurname());
         }
-        if(request.getSecond_surname().length() == 0 || request.getSecond_surname() == null || Objects.equals(request.getSecond_surname(), "")) {
-            ceo.setSecond_surname(ceo.getSecond_surname());
+        if(request.getSecondSurname().length() == 0 || request.getSecondSurname() == null || Objects.equals(request.getSecondSurname(), "")) {
+            ceo.setSecondSurname(ceo.getSecondSurname());
         }else {
-            ceo.setSecond_surname(request.getSecond_surname());
+            ceo.setSecondSurname(request.getSecondSurname());
         }
         return ceo;
     }

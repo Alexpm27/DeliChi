@@ -7,4 +7,9 @@ import lombok.Setter;
 public class CreateRestaurantResponse {
     private Long id;
     private String name;
+    private String address;
+    private Long phoneNumber;
+    private String schedule;
+    private String kitchen;
+    private String zone;
 }

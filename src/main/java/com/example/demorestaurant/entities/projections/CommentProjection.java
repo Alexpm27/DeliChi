@@ -5,6 +5,6 @@ public interface CommentProjection {
     String getDate();
     String getContent();
     Integer getScore();
-    Long getId_user();
-    Long getId_restaurant();
+    Long getUserId();
+    Long getRestaurantId();
 }

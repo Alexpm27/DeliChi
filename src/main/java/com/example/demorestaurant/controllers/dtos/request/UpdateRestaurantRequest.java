@@ -6,11 +6,11 @@ import lombok.Setter;
 @Getter @Setter
 public class UpdateRestaurantRequest {
     private String name;
+    private Long phoneNumber;
     private String address;
+    private String schedule;
+    private Long zoneId;
     private String kitchen;
     private String logo;
     private String banner;
-    private Long phone_number;
-    private String schedule;
-    private Long zone_id;
 }

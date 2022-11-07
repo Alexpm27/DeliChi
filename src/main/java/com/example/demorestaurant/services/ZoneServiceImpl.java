@@ -2,6 +2,7 @@ package com.example.demorestaurant.services;
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetZoneResponse;
 import com.example.demorestaurant.entities.Zone;
+import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.repositories.IZoneRepository;
 import com.example.demorestaurant.services.interfaces.IZoneService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class ZoneServiceImpl implements IZoneService {
     }
 
     public Zone FindAndEnsureExist(Long id){
-        return repository.findById(id).orElseThrow(()-> new RuntimeException("not found"));
+        return repository.findById(id).orElseThrow(()-> new NotFoundException("Zone not found"));
     }
 
 }

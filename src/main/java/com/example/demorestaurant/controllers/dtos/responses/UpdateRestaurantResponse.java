@@ -7,4 +7,11 @@ import lombok.Setter;
 public class UpdateRestaurantResponse {
     private Long id;
     private String name;
+    private Long phoneNumber;
+    private String address;
+    private String schedule;
+    private String kitchen;
+    private String logo;
+    private String banner;
+    private String zone;
 }

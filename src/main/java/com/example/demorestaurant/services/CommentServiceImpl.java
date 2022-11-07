@@ -8,6 +8,7 @@ import com.example.demorestaurant.controllers.dtos.responses.CreateCommentRespon
 import com.example.demorestaurant.controllers.dtos.responses.GetCommentResponse;
 import com.example.demorestaurant.controllers.dtos.responses.UpdateCommentResponse;
 import com.example.demorestaurant.entities.Comment;
+import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.projections.CommentProjection;
 import com.example.demorestaurant.repositories.ICommentRepository;
 import com.example.demorestaurant.services.interfaces.ICommentService;
@@ -53,7 +54,7 @@ public class CommentServiceImpl implements ICommentService {
     public BaseResponse listAllCommentByRestaurantId(Long restaurantId) {
         return BaseResponse.builder()
                 .data(
-                        repository.listAllCommentsByRestaurantId(restaurantId)
+                        repository.findAllByRestaurant_Id(restaurantId).orElseThrow(()->new NotFoundException("list comments not found"))
                                 .stream()
                                 .map(this::from)
                                 .map(this::from_get)
@@ -127,8 +128,8 @@ public class CommentServiceImpl implements ICommentService {
         comment.setDate(commentProjection.getDate());
         comment.setContent(commentProjection.getContent());
         comment.setScore(commentProjection.getScore());
-        comment.setUser(userService.FindAndEnsureExists(commentProjection.getId_user()));
-        comment.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(commentProjection.getId_restaurant()));
+        comment.setUser(userService.FindAndEnsureExists(commentProjection.getUserId()));
+        comment.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(commentProjection.getRestaurantId()));
         return comment;
     }
 
