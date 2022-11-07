@@ -67,9 +67,9 @@ public class CeoServiceImpl implements ICeoService {
 
     //get a ceo
     @Override
-    public BaseResponse get(GetCeoRequest request) {
+    public BaseResponse get(String email) {
         return BaseResponse.builder()
-                .data(from_get(validationCeo(request)))
+                .data(from_get(validationCeo(email)))
                 .message("access got from ceo")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK)
@@ -110,6 +110,7 @@ public class CeoServiceImpl implements ICeoService {
         response.setFirstSurname(ceo.getFirstSurname());
         response.setSecondSurname(ceo.getSecondSurname());
         response.setEmail(ceo.getEmail());
+        response.setPassword(ceo.getPassword());
         return response;
     }
 
@@ -137,11 +138,11 @@ public class CeoServiceImpl implements ICeoService {
     }
 
     //validataion of Ceo
-    private Ceo validationCeo(GetCeoRequest request) {
-        CeoProjection ceoProjection = repository.findCeoByEmail(request.getEmail()).orElseThrow(() -> new NotFoundException("ceo not found"));
-        if (!Objects.equals(ceoProjection.getPassword(), request.getPassword())) {
+    private Ceo validationCeo(String email) {
+        CeoProjection ceoProjection = repository.findCeoByEmail(email).orElseThrow(() -> new NotFoundException("ceo not found"));
+        /*if (!Objects.equals(ceoProjection.getPassword(), request.getPassword())) {
             throw new NotFoundException("ceo not found");
-        }
+        }*/
         //return ceo;
         return fromToCeo(ceoProjection);
     }

@@ -21,9 +21,9 @@ public class CeoController {
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
-    @GetMapping()
-    public ResponseEntity<BaseResponse> get(@RequestBody GetCeoRequest request){
-        BaseResponse baseResponse = service.get(request);
+    @GetMapping("{email}")
+    public ResponseEntity<BaseResponse> get(@PathVariable String email){
+        BaseResponse baseResponse = service.get(email);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 

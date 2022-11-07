@@ -11,7 +11,7 @@ public interface ICeoService {
 
     GetCeoResponse get(Long id);
 
-    BaseResponse get(GetCeoRequest request);
+    BaseResponse get(String email);
 
     BaseResponse update(UpdateCeoRequest request, Long id);
 
