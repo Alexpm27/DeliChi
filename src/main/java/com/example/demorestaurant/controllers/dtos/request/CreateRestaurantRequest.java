@@ -24,6 +24,8 @@ public class CreateRestaurantRequest {
     @NotNull
     @NotBlank
     private String kitchen;
+    private String description;
+    private String menu;
     private String logo;
     private String banner;
 }

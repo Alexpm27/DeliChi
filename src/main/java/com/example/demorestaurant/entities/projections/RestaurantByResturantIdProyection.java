@@ -12,4 +12,6 @@ public interface RestaurantByResturantIdProyection {
     String getSchedule();
     String getKitchen();
     String getZone();
+    String getDescription();
+    String getMenu();
 }

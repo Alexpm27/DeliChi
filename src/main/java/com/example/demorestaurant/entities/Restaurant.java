@@ -43,6 +43,12 @@ public class Restaurant {
     @Column(nullable = false, unique = true)
     private Long phoneNumber;
 
+    @Column(nullable = false, length = 500)
+    private String description;
+
+    @Column(nullable = false, length = 500)
+    private String menu;
+
     @ManyToOne
     private Ceo ceo;
 

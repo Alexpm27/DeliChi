@@ -80,6 +80,8 @@ public class RestaurantServiceImpl implements IRestaurantService {
         response.setKitchen(restaurant.getKitchen());
         response.setPhoneNumber(restaurant.getPhoneNumber());
         response.setSchedule(restaurant.getSchedule());
+        response.setDescription(restaurant.getDescription());
+        response.setMenu(restaurant.getMenu());
         response.setZone(zoneService.FindAndEnsureExist(restaurant.getZone().getId()).getName());
         return response;
     }
@@ -94,6 +96,8 @@ public class RestaurantServiceImpl implements IRestaurantService {
         restaurant.setPhoneNumber(request.getPhoneNumber());
         restaurant.setSchedule(request.getSchedule());
         restaurant.setZone(zoneService.FindAndEnsureExist(request.getZoneId()));
+        restaurant.setDescription(request.getDescription());
+        restaurant.setMenu(restaurant.getMenu());
         return restaurant;
     }
 
@@ -166,6 +170,8 @@ public class RestaurantServiceImpl implements IRestaurantService {
         restaurant.setPhoneNumber(restaurantProjection.getPhoneNumber());
         restaurant.setSchedule(restaurantProjection.getSchedule());
         restaurant.setAddress(restaurantProjection.getAddress());
+        restaurant.setDescription(restaurantProjection.getDescription());
+        restaurant.setMenu(restaurantProjection.getMenu());
         Zone zone = zoneService.FindAndEnsureExist(restaurantProjection.getZoneId());
         restaurant.setZone(zone);
         Ceo ceo = ceoService.FindAndEnsureExist(restaurantProjection.getCeoId());
@@ -199,6 +205,8 @@ public class RestaurantServiceImpl implements IRestaurantService {
         response.setKitchen(restaurant.getKitchen());
         response.setSchedule(restaurant.getSchedule());
         response.setZone(restaurant.getZone());
+        response.setDescription(restaurant.getDescription());
+        response.setMenu(restaurant.getMenu());
         response.setImages(images);
         response.setComments(comments);
         return response;
@@ -221,6 +229,8 @@ public class RestaurantServiceImpl implements IRestaurantService {
         response.setPhoneNumber(restaurant.getPhoneNumber());
         response.setKitchen(restaurant.getKitchen());
         response.setZone(restaurant.getZone().getName());
+        response.setDescription(restaurant.getDescription());
+        response.setMenu(restaurant.getMenu());
         return response;
     }
     private Restaurant from(CreateRestaurantRequest request, Long ceoId){
@@ -231,6 +241,8 @@ public class RestaurantServiceImpl implements IRestaurantService {
         restaurant.setSchedule(request.getSchedule());
         restaurant.setZone(zoneService.FindAndEnsureExist(request.getZoneId()));
         restaurant.setKitchen(request.getKitchen());
+        restaurant.setDescription(request.getDescription());
+        restaurant.setMenu(request.getDescription());
         restaurant.setBanner(request.getBanner());
         restaurant.setLogo(request.getLogo());
         restaurant.setCeo(ceoService.FindAndEnsureExist(ceoId));
@@ -244,6 +256,8 @@ public class RestaurantServiceImpl implements IRestaurantService {
         response.setKitchen(restaurant.getKitchen());
         response.setPhoneNumber(restaurant.getPhoneNumber());
         response.setSchedule(restaurant.getSchedule());
+        response.setDescription(restaurant.getDescription());
+        response.setMenu(restaurant.getMenu());
         response.setBanner(restaurant.getBanner());
         response.setLogo(restaurant.getLogo());
         response.setZoneId(restaurant.getZone().getId());

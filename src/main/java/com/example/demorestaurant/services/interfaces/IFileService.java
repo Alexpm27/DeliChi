@@ -7,12 +7,13 @@ public interface IFileService {
 
     BaseResponse uploadRestaurantImg(MultipartFile multipartFile, Long idCeo, Long idRestaurant, String img_type);
 
-    BaseResponse listAllImagesByRestaurantId(Long restaurant_id);
+    BaseResponse listAllImagesByRestaurantId(Long idRestaurant);
 
-    BaseResponse ListAllLogoImagesByRestaurantId(Long restaurant_id);
+    BaseResponse ListAllLogoImagesByRestaurantId(Long idRestaurant);
 
-    BaseResponse ListAllBannerImagesByRestaurantId(Long restaurant_id);
+    BaseResponse ListAllBannerImagesByRestaurantId(Long idRestaurant);
 
     Boolean ValidateFileExtension(MultipartFile file);
 
+    String UpdateRestaurantLogo(MultipartFile file, Long idRestaurant, Long idCeo);
 }

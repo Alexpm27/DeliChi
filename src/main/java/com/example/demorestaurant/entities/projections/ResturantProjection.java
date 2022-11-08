@@ -5,4 +5,5 @@ public interface ResturantProjection {
     String getLogo();
     String getName();
     String getZone();
+
 }

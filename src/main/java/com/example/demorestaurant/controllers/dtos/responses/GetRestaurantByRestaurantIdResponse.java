@@ -15,6 +15,8 @@ public class GetRestaurantByRestaurantIdResponse {
     private String kitchen;
     private Long phone_number;
     private String zone;
+    private String description;
+    private String menu;
     private List<String> images;
     private List<CommentResponse> comments;
 }

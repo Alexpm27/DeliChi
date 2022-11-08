@@ -12,4 +12,6 @@ public class CreateRestaurantResponse {
     private String schedule;
     private String kitchen;
     private String zone;
+    private String description;
+    private String menu;
 }

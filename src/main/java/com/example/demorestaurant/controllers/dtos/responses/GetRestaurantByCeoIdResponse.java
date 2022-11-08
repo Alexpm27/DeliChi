@@ -9,4 +9,6 @@ public class GetRestaurantByCeoIdResponse {
     private String logo;
     private String name;
     private String zone;
+    private String description;
+    private String menu;
 }

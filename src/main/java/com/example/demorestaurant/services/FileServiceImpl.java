@@ -55,7 +55,7 @@ public class FileServiceImpl implements IFileService {
     private String SECRET_KEY = "CcnDvtcFQHMiecDa506XTL6RUMHA07Rkk+vRNpTo";
 
 
-    // Uplod a restaurant img by ceo
+    // Upload a restaurant img by ceo
     @Override
     public BaseResponse uploadRestaurantImg(MultipartFile multipartFile, Long idCeo, Long idRestaurant, String img_type) {
         Image image = new Image();
@@ -116,10 +116,35 @@ public class FileServiceImpl implements IFileService {
 
     }
 
+
+    @Override
+    public String UpdateRestaurantLogo(MultipartFile file, Long idRestaurant, Long idCeo) {
+        /**
+         * Eliminar los atributos de logo, imagen y banner de restaurant
+         * Y esos atributos estarán en la tabla imagenes que tiene el tipo de imagenes
+         * Primero se creará un restaurante y no tendrá logo como tal
+         * Tendrá pero instanciada (relacionada con la tabla imagenes), extraerá el logo que tenga ahí
+         * que coincida con el id del restaurante en el que se esté hablando
+         *
+         * Una vez creado el restaurante y subida las imagenes se le pasará el Id del ceo y del restaurante
+         * para que así se haga la relacion
+         * Subir al bucket, guardar en la tabla, cuando el front haga una peticion del tipo get de un restaurante, hará
+         * a parte una peticion get que traerá el logo del restaurante en el que se esté (dos fetch)
+         * Cuando ya esté creado el restaurante y se quiera actualizar la imagen:
+         * Mandar una peticion al controlador de file, en donde se enviará una imagen, una id del restaurante y el id de ceo
+         * Se le pasan los parametros para que lo agregue al bucket del logo
+         *
+         * En si solo se basa en el la actualización de la url en la base de datos, con el valor de la url que se
+         * genero de la nueva imagen, y cómo se guardará en el mismo id de la imagen
+         */
+
+        return null;
+    }
+
     // Images type images
     @Override
-    public BaseResponse listAllImagesByRestaurantId(Long restaurant_id) {
-        List<FileProjection> files = repository.listAllImagesByRestaurantId(restaurant_id);
+    public BaseResponse listAllImagesByRestaurantId(Long idRestaurant) {
+        List<FileProjection> files = repository.listAllImagesByRestaurantId(idRestaurant);
 
         return BaseResponse.builder()
                 .data(files
@@ -132,11 +157,10 @@ public class FileServiceImpl implements IFileService {
                 .build();
     }
 
-
     // Images type logo
     @Override
-    public BaseResponse ListAllLogoImagesByRestaurantId(Long restaurant_id) {
-        List<FileProjection> files = repository.ListAllLogoImagesByRestaurantId(restaurant_id);
+    public BaseResponse ListAllLogoImagesByRestaurantId(Long idRestaurant) {
+        List<FileProjection> files = repository.ListAllLogoImagesByRestaurantId(idRestaurant);
         try{
             return BaseResponse.builder()
                     .data(files
@@ -154,8 +178,8 @@ public class FileServiceImpl implements IFileService {
 
     // Images type banner
     @Override
-    public BaseResponse ListAllBannerImagesByRestaurantId(Long restaurant_id) {
-        List<FileProjection> files = repository.ListAllBannerImagesByRestaurantId(restaurant_id);
+    public BaseResponse ListAllBannerImagesByRestaurantId(Long idRestaurant) {
+        List<FileProjection> files = repository.ListAllBannerImagesByRestaurantId(idRestaurant);
         return BaseResponse.builder()
                 .data(files
                         .stream()

@@ -17,4 +17,6 @@ public class GetRestaurantResponse {
     private Long phoneNumber;
     private Long zoneId;
     private Long CeoId;
+    private String description;
+    private String menu;
 }

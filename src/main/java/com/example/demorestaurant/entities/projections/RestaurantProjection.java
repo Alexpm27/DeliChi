@@ -11,4 +11,7 @@ public interface RestaurantProjection {
     String getLogo();
     String getBanner();
     Long getCeoId();
+    String getDescription();
+    String getMenu();
+
 }

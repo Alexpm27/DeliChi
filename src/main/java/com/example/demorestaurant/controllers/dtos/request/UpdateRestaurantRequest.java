@@ -11,6 +11,8 @@ public class UpdateRestaurantRequest {
     private String schedule;
     private Long zoneId;
     private String kitchen;
+    private String description;
+    private String menu;
     private String logo;
     private String banner;
 }

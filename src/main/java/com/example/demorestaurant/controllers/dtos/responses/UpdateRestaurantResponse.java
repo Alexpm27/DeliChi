@@ -11,6 +11,8 @@ public class UpdateRestaurantResponse {
     private String address;
     private String schedule;
     private String kitchen;
+    private String description;
+    private String menu;
     private String logo;
     private String banner;
     private String zone;

@@ -10,6 +10,8 @@ public class GetRestaurantRequest {
     private String address;
     private String schedule;
     private String kitchen;
-    private String phone_number;
+    private String phoneNumber;
     private String name_ceo;
+    private String description;
+    private String menu;
 }
