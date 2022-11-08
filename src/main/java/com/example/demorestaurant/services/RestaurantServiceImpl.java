@@ -6,7 +6,6 @@ import com.example.demorestaurant.entities.Ceo;
 import com.example.demorestaurant.entities.Zone;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.projections.*;
-import com.example.demorestaurant.services.interfaces.ICeoService;
 import com.example.demorestaurant.services.interfaces.IRestaurantService;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
@@ -15,7 +14,6 @@ import com.example.demorestaurant.repositories.IRestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -132,6 +130,20 @@ public class RestaurantServiceImpl implements IRestaurantService {
                         .collect(Collectors.toList())
                 )
                 .message("Restaurant list by her name")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
+    }
+
+    @Override
+    public BaseResponse getRestaurantByZoneId(Long zoneId) {
+        List<RestaurantProjection> restaurants = repository.getRestaurantByZone_Id(zoneId)
+                .orElseThrow(()-> new NotFoundException("Restaurant list by zone id not fount"));
+        return BaseResponse.builder()
+                .data(restaurants.stream()
+                        .map(this::from)
+                        .collect(Collectors.toList())
+                )
+                .message("Restaurant list by zone_id")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }

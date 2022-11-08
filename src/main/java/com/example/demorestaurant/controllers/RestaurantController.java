@@ -45,6 +45,11 @@ public class RestaurantController {
         BaseResponse baseResponse = service.getRestaurantByRestaurantId(restaurantId);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
+    @GetMapping("restaurant/zone/{zoneId}")
+    public ResponseEntity<BaseResponse> getRestaurantByZoneId(@PathVariable Long zoneId){
+        BaseResponse baseResponse = service.getRestaurantByZoneId(zoneId);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
 
     @PutMapping("{id}")
     public ResponseEntity<BaseResponse> update(@RequestBody UpdateRestaurantRequest request, @PathVariable Long id){

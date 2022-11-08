@@ -41,5 +41,7 @@ public interface IRestaurantRepository extends JpaRepository<Restaurant, Long> {
             "from comments where restaurant_id = :restaurantId", nativeQuery = true)
     List<CommentProjection> listAllComments(Long restaurantId);
 
+    Optional<List<RestaurantProjection>> getRestaurantByZone_Id(Long id);
+
 
 }
