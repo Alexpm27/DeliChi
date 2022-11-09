@@ -12,8 +12,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetCeoResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetImageResponse;
+import com.example.demorestaurant.controllers.dtos.responses.GetRestaurantResponse;
 import com.example.demorestaurant.entities.Image;
 import com.example.demorestaurant.entities.Restaurant;
+import com.example.demorestaurant.entities.exceptions.InternalServerError;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.exceptions.NotValidException;
 import com.example.demorestaurant.entities.projections.FileProjection;
@@ -61,7 +63,7 @@ public class FileServiceImpl implements IFileService {
         Image image = new Image();
         String urlDirection = "";
         GetCeoResponse ceo = ceoService.get(idCeo);
-        Restaurant restaurant = restaurantService.FindRestaurantAndEnsureExist(idRestaurant);
+        Restaurant restaurant = restaurantService.FindAndEnsureExist(idRestaurant);
 
         if (ValidateFileExtension(multipartFile)){
 
@@ -109,7 +111,7 @@ public class FileServiceImpl implements IFileService {
                 uploadFileTos3bucket(filePath, file); // Ubication, file
 
                 image.setFileUrl(fileUrl);
-                image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(idRestaurant));
+                image.setRestaurant(restaurantService.FindAndEnsureExist(idRestaurant));
                 image.setName(generateFileName(multipartFile));
                 image.setImageType(imgType);
 
@@ -138,11 +140,11 @@ public class FileServiceImpl implements IFileService {
     public BaseResponse UpdateRestaurantLogo(MultipartFile multipartFile, Long idRestaurant, Long idCeo) {
 
         Image newImage = fromProjectionToImage(repository.GetLogoImageByRestaurantId(idRestaurant)
-                .orElseThrow(()-> new NotFoundException("Logo not found")));
+                .orElseThrow(NotFoundException::new));
 
         String urlDirection = "";
         GetCeoResponse ceo = ceoService.get(idCeo);
-        Restaurant restaurant = restaurantService.FindRestaurantAndEnsureExist(idRestaurant);
+        Restaurant restaurant = restaurantService.FindAndEnsureExist(idRestaurant);
 
         if (ValidateFileExtension(multipartFile)){
 
@@ -164,7 +166,7 @@ public class FileServiceImpl implements IFileService {
 
                 // Save the new URL in the DB
                 newImage.setFileUrl(fileUrl);
-                newImage.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(idRestaurant));
+                newImage.setRestaurant(restaurantService.FindAndEnsureExist(idRestaurant));
                 newImage.setName(generateFileName(multipartFile));
                 newImage.setImageType("logo");
 
@@ -198,11 +200,11 @@ public class FileServiceImpl implements IFileService {
     public BaseResponse UpdateRestaurantBanner(MultipartFile multipartFile, Long idRestaurant, Long idCeo) {
 
         Image newImage = fromProjectionToImage(repository.GetBannerImageByRestaurantId(idRestaurant)
-                .orElseThrow(()-> new NotFoundException("Banner not found")));
+                .orElseThrow(NotFoundException::new));
 
         String urlDirection = "";
         GetCeoResponse ceo = ceoService.get(idCeo);
-        Restaurant restaurant = restaurantService.FindRestaurantAndEnsureExist(idRestaurant);
+        Restaurant restaurant = restaurantService.FindAndEnsureExist(idRestaurant);
 
         if (ValidateFileExtension(multipartFile)){
 
@@ -224,7 +226,7 @@ public class FileServiceImpl implements IFileService {
 
                 // Save the new URL in the DB
                 newImage.setFileUrl(fileUrl);
-                newImage.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(idRestaurant));
+                newImage.setRestaurant(restaurantService.FindAndEnsureExist(idRestaurant));
                 newImage.setName(generateFileName(multipartFile));
                 newImage.setImageType("Banner");
 
@@ -283,23 +285,16 @@ public class FileServiceImpl implements IFileService {
     // Images type logo
     @Override
     public BaseResponse GetLogoImageByRestaurantId(Long idRestaurant) {
-        Optional<FileProjection> files = repository.GetLogoImageByRestaurantId(idRestaurant);
-        if (files.isPresent()){
-            try{
-                return BaseResponse.builder()
-                        .data(files
-                                .stream()
-                                .map(this::from)
-                                .collect(Collectors.toList()))
-                        .message("list all logo images by restaurant")
-                        .success(Boolean.TRUE)
-                        .httpStatus(HttpStatus.OK)
-                        .build();
-            }catch (Error e){
-                throw new NotFoundException("Not found logos");
-            }
-        }else{
-            throw new NotFoundException("Logo not found");
+        FileProjection fileProjection = repository.GetLogoImageByRestaurantId(idRestaurant).orElseThrow(NotFoundException::new);
+        try{
+            return BaseResponse.builder()
+                    .data(fileProjection)
+                    .message("list all logo images by restaurant")
+                    .success(Boolean.TRUE)
+                    .httpStatus(HttpStatus.OK)
+                    .build();
+        }catch (Error e){
+            throw new InternalServerError();
         }
     }
 
@@ -335,11 +330,10 @@ public class FileServiceImpl implements IFileService {
                 .withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
-
-    public String deleteFileFromS3Bucket(String fileUrl) {
+    public void deleteFileFromS3Bucket(String fileUrl) {
         String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
         s3client.deleteObject(new DeleteObjectRequest(BUCKET_NAME, fileName));
-        return "Successfully deleted";
+        //return "Successfully deleted";
     }
 
     @PostConstruct
@@ -354,18 +348,30 @@ public class FileServiceImpl implements IFileService {
 
     // projection to Image
     private GetImageResponse from (FileProjection projection){
-        GetImageResponse response = new GetImageResponse();
         try {
-            response.setId(projection.getId());
-            response.setName(projection.getName());
-            response.setFileUrl(projection.getFileUrl());
-            response.setImgType (projection.getImageType());
-            return response;
+            return GetImageResponse.builder()
+                    .name(projection.getName())
+                    .id(projection.getId())
+                    .imgType(projection.getImageType())
+                    .fileUrl(projection.getFileUrl()).build();
         }catch (IllegalArgumentException e){
             throw new IllegalArgumentException("Can't transform into a GetImageResponse");
         }
     }
 
+    @Override
+    public Image fromFileProjectionToImage(FileProjection projection){
+        Image response = new Image();
+        try {
+            response.setId(projection.getId());
+            response.setName(projection.getName());
+            response.setFileUrl(projection.getFileUrl());
+            response.setImageType(projection.getImageType());
+            return response;
+        }catch (IllegalArgumentException e){
+            throw new IllegalArgumentException("Can't transform into a GetImageResponse");
+        }
+    }
 
     @Override
     public Boolean ValidateFileExtension(MultipartFile file) {
@@ -398,7 +404,7 @@ public class FileServiceImpl implements IFileService {
     };
 
     private Image FindImageAndEnsureExist(Long id){
-        return repository.findById(id).orElseThrow(()->new NotFoundException("Image not found"));
+        return repository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     private Image fromProjectionToImage(FileProjection fileProjection){
@@ -406,22 +412,8 @@ public class FileServiceImpl implements IFileService {
         image.setId(fileProjection.getId());
         image.setImageType(fileProjection.getImageType());
         image.setFileUrl(fileProjection.getFileUrl());
-        image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(fileProjection.getIdRestaurant()));
+        image.setRestaurant(restaurantService.FindAndEnsureExist(fileProjection.getIdRestaurant()));
         return image;
     }
-
-
-     /*
-    // Image to GetImageResponse
-    private GetImageResponse from_get(Image image){
-        GetImageResponse response = new GetImageResponse();
-        response.setId(image.getId());
-        response.setName(image.getName());
-        response.setFileUrl (image.getFileUrl());
-        response.setImgType(image.getImageType());
-        return response;
-    }*/
-
-
 
 }

@@ -9,23 +9,14 @@ import javax.validation.constraints.NotNull;
 @Getter @Setter
 public class CreateRestaurantRequest {
     @NotNull
-    @NotBlank
     private String name;
     @NotNull
     private Long phoneNumber;
     @NotNull
-    @NotBlank
     private String address;
     @NotNull
-    @NotBlank
     private String schedule;
-    @NotNull
-    private Long zoneId;
-    @NotNull
-    @NotBlank
-    private String kitchen;
     private String description;
     private String menu;
-    private String logo;
-    private String banner;
+    private String kitchen;
 }

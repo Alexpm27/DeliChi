@@ -8,21 +8,21 @@ import com.example.demorestaurant.entities.Restaurant;
 import java.util.List;
 
 public interface IRestaurantService {
-    BaseResponse create(CreateRestaurantRequest request, Long ceoId);
+    BaseResponse create(CreateRestaurantRequest request, Long ceoId, Long zoneId);
 
     BaseResponse get(Long id);
 
-    BaseResponse update(UpdateRestaurantRequest request, Long id);
+    BaseResponse list();
+
+    BaseResponse update(UpdateRestaurantRequest request, Long id, Long zoneId);
 
     BaseResponse delete(Long id);
-
-    BaseResponse getRestaurantByRestaurantId(Long restaurantId);
 
     BaseResponse listAllRestaurantsByCeoId(Long ceoId);
 
     BaseResponse listAllRestaurantsByName(String name);
 
-    BaseResponse getRestaurantByZoneId(Long zoneId);
+    BaseResponse listAllRestaurantsByZoneId(Long zoneId);
 
     List<Restaurant> listAllRestaurantsByCeoId2(Long ceoId);
 }

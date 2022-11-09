@@ -4,6 +4,8 @@ import com.example.demorestaurant.controllers.dtos.request.CreateReservationRequ
 import com.example.demorestaurant.controllers.dtos.request.UpdateReservationRequest;
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetReservationResponse;
+import com.example.demorestaurant.entities.Reservation;
+import com.example.demorestaurant.entities.projections.ReservationProjection;
 
 public interface IReservationService {
     BaseResponse create(CreateReservationRequest request);
@@ -15,4 +17,6 @@ public interface IReservationService {
     void delete(Long id);
 
     BaseResponse ListReservationByRestaurantId(Long restaurantId);
+
+    Reservation fromReservationProjectionToReservation(ReservationProjection reservationProjection);
 }

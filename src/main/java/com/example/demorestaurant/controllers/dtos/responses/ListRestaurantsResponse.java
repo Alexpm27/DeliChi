@@ -7,10 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class GetReservationResponse {
+public class ListRestaurantsResponse {
     private Long id;
-    private String date;
-    private Integer people;
-    private Long restaurant_id;
-    private Long user_id;
+    private String logo;
+    private String name;
+    private String zone;
+    private Integer score;
+    private String description;
 }

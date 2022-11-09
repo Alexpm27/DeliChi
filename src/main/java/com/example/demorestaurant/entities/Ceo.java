@@ -24,14 +24,13 @@ public class Ceo {
     @NotBlank
     private String name;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String firstSurname;
 
-    @Column(nullable = true, length = 255)
+    @Column(length = 255)
     private String secondSurname;
 
     @Column(nullable = false, unique = true, length = 255)
-    @NotBlank
     @Email
     private String email;
 
@@ -44,5 +43,8 @@ public class Ceo {
 
     @OneToMany(mappedBy = "ceo")
     private List<Restaurant> restaurants;
+
+    @OneToMany(mappedBy = "ceo")
+    private List<Image> images;
 
 }

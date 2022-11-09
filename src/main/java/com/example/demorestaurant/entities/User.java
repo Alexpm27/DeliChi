@@ -29,7 +29,6 @@ public class User {
     private String lastName;
 
     @Column(nullable = false, unique = true, length = 255)
-    @NotBlank
     @Email
     private String email;
 
@@ -38,7 +37,6 @@ public class User {
     private String password;
 
     @Column(nullable = false, unique = true)
-
     private Long phoneNumber;
 
     @OneToMany(mappedBy = "user")

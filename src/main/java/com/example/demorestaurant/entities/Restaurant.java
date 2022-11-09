@@ -1,5 +1,6 @@
 package com.example.demorestaurant.entities;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,12 +19,6 @@ public class Restaurant {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @Column(length = 1000)
-    private String banner;
-
-    @Column(length = 1000)
-    private String logo;
-
     @Column(nullable = false, length = 255)
     @NotBlank
     private String name;
@@ -36,17 +31,16 @@ public class Restaurant {
     @NotBlank
     private String schedule;
 
-    @Column(nullable = false, length = 500)
-    @NotBlank
+    @Column(length = 500)
     private String kitchen;
 
     @Column(nullable = false, unique = true)
     private Long phoneNumber;
 
-    @Column(nullable = false, length = 500)
+    @Column(length = 500)
     private String description;
 
-    @Column(nullable = false, length = 500)
+    @Column(length = 500)
     private String menu;
 
     @ManyToOne

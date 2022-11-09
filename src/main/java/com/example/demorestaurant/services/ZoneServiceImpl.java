@@ -48,8 +48,9 @@ public class ZoneServiceImpl implements IZoneService {
         return response;
     }
 
+    @Override
     public Zone FindAndEnsureExist(Long id){
-        return repository.findById(id).orElseThrow(()-> new NotFoundException("Zone not found"));
+        return repository.findById(id).orElseThrow(NotFoundException::new);
     }
 
 }

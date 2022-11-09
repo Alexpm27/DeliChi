@@ -1,9 +1,12 @@
 package com.example.demorestaurant.controllers.dtos.responses;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
+@Builder
 public class UpdateRestaurantResponse {
     private Long id;
     private String name;
@@ -13,7 +16,5 @@ public class UpdateRestaurantResponse {
     private String kitchen;
     private String description;
     private String menu;
-    private String logo;
-    private String banner;
     private String zone;
 }

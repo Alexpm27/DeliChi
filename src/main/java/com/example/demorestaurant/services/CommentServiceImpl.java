@@ -54,7 +54,7 @@ public class CommentServiceImpl implements ICommentService {
     public BaseResponse listAllCommentByRestaurantId(Long restaurantId) {
         return BaseResponse.builder()
                 .data(
-                        repository.findAllByRestaurant_Id(restaurantId).orElseThrow(()->new NotFoundException("list comments not found"))
+                        repository.findAllByRestaurant_Id(restaurantId).orElseThrow(NotFoundException::new)
                                 .stream()
                                 .map(this::from)
                                 .map(this::from_get)
@@ -89,7 +89,7 @@ public class CommentServiceImpl implements ICommentService {
     private Comment from (CreateCommentRequest request){
         Comment comment = new Comment();
         comment.setUser(userService.FindAndEnsureExists(request.getUser_id()));
-        comment.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(request.getRestaurant_id()));
+        comment.setRestaurant(restaurantService.FindAndEnsureExist(request.getRestaurant_id()));
         comment.setDate(request.getDate());
         comment.setContent(request.getContent());
         comment.setScore(request.getScore());
@@ -122,14 +122,15 @@ public class CommentServiceImpl implements ICommentService {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
     }
 
-    private Comment from(CommentProjection commentProjection){
+    @Override
+    public Comment from(CommentProjection commentProjection){
         Comment comment = new Comment();
         comment.setId(commentProjection.getId());
         comment.setDate(commentProjection.getDate());
         comment.setContent(commentProjection.getContent());
         comment.setScore(commentProjection.getScore());
         comment.setUser(userService.FindAndEnsureExists(commentProjection.getUserId()));
-        comment.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(commentProjection.getRestaurantId()));
+        comment.setRestaurant(restaurantService.FindAndEnsureExist(commentProjection.getRestaurantId()));
         return comment;
     }
 

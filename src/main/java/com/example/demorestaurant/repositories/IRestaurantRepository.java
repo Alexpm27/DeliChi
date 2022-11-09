@@ -13,35 +13,28 @@ import java.util.Optional;
 @Repository
 public interface IRestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-    /*@Query(value = "select restaurants.id, restaurants.logo, restaurants.name, zones.name zone " +
-            "from restaurants " +
-            "inner join ceos c on restaurants.ceo_id = c.id " +
-            "inner join zones on restaurants.zone_id = zones.id " +
-            "where c.id = :ceoId", nativeQuery = true)
-    List<ResturantProjection> listAllRestaurantsByCeoId(Long ceoId);*/
+    @Query(value = "select r.* "+
+            "from restaurants r", nativeQuery = true)
+    Optional<List<Restaurant>> findAllRestaurants();
 
-    Optional<List<RestaurantProjection>> findAllByCeoId(Long id);
+    Optional<List<RestaurantProjection>> findAllByCeo_Id(Long id);
 
     Optional<List<Restaurant>> getRestaurantByCeo_Id(Long id);
 
-    /*@Query(value = "select restaurants.id, restaurants.banner, restaurants.logo, restaurants.name, " +
-            "restaurants.address, restaurants.phone_number, " +
-            "restaurants.schedule, restaurants.kitchen, zones.name zone from restaurants " +
-            "inner join zones on restaurants.zone_id = zones.id " +
-            "where restaurants.id = :restaurantId", nativeQuery = true)*/
-    Optional<RestaurantProjection> getRestaurantById(Long restaurantId);
-
     Optional<List<RestaurantProjection>> findAllByName(String name);
 
-    @Query(value = "select images.file_url images from images " +
+    @Query(value = "select images.* from images " +
             "where images.restaurant_id = :restaurantId", nativeQuery = true)
-    List<ImageProection> listAllImages(Long restaurantId);
+    Optional<List<FileProjection>> listAllImagesByRestaurantId(Long restaurantId);
 
-    @Query(value = "select comments.content, comments.score, comments.date " +
-            "from comments where restaurant_id = :restaurantId", nativeQuery = true)
-    List<CommentProjection> listAllComments(Long restaurantId);
+    @Query(value = "select comments.* from comments " +
+            "where comments.restaurant_id = :restaurantId", nativeQuery = true)
+    Optional<List<CommentProjection>> listAllCommentsByRestaurantId(Long restaurantId);
 
-    Optional<List<RestaurantProjection>> getRestaurantByZone_Id(Long id);
+    @Query(value = "select reservations.* from reservations " +
+            "where reservations.restaurant_id = :restaurantId", nativeQuery = true)
+    Optional<List<ReservationProjection>> listAllReservationsByRestaurantId(Long restaurantId);
 
+    Optional<List<RestaurantProjection>> findAllByZone_Id(Long id);
 
 }

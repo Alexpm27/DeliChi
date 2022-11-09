@@ -8,10 +8,7 @@ public interface RestaurantProjection {
     String getSchedule();
     String getKitchen();
     Long getZoneId();
-    String getLogo();
-    String getBanner();
     Long getCeoId();
     String getDescription();
     String getMenu();
-
 }

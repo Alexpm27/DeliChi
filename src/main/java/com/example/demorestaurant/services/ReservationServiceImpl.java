@@ -63,7 +63,7 @@ public class ReservationServiceImpl implements IReservationService {
 
     @Override
     public BaseResponse ListReservationByRestaurantId(Long restaurantId) {
-        List<ReservationProjection> reservation = repository.findAllByRestaurant_Id(restaurantId).orElseThrow(()->new NotFoundException("list reservation not found"));
+        List<ReservationProjection> reservation = repository.findAllByRestaurant_Id(restaurantId).orElseThrow(NotFoundException::new);
         List<GetReservationByRestaurantIdResponse> responses = reservation.stream()
                 .map(this::from)
                 .collect(Collectors.toList());
@@ -89,20 +89,18 @@ public class ReservationServiceImpl implements IReservationService {
         reservation.setDate(request.getDate());
         reservation.setPeople(request.getPeople());
         reservation.setUser(userService.FindAndEnsureExists(request.getUser_id()));
-        reservation.setRestaurant(resturantService.FindRestaurantAndEnsureExist(request.getRestaurant_id()));
+        reservation.setRestaurant(resturantService.FindAndEnsureExist(request.getRestaurant_id()));
         return reservation;
     }
 
     //from Reservation to GetReservationResponse
     private GetReservationResponse from_get(Reservation reservation){
-        GetReservationResponse response = new GetReservationResponse();
-        response.setId(reservation.getId());
-        response.setDate(reservation.getDate());
-        response.setPeople(reservation.getPeople());
-        // Here are the changes about the returning
-        response.setRestaurant_id(reservation.getRestaurant().getId());
-        response.setUser_id(reservation.getUser().getId());
-        return response;
+        return GetReservationResponse.builder()
+                .user_id(reservation.getUser().getId())
+                .people(reservation.getPeople())
+                .date(reservation.getDate())
+                .restaurant_id(reservation.getRestaurant().getId())
+                .id(reservation.getId()).build();
     }
 
     //from Reservation to UpdateReservationResponse
@@ -120,8 +118,19 @@ public class ReservationServiceImpl implements IReservationService {
     private GetReservationByRestaurantIdResponse from(ReservationProjection reservation){
         GetReservationByRestaurantIdResponse response = new GetReservationByRestaurantIdResponse();
         response.setId(reservation.getId());
-        response.setUserId(reservation.getUser_Id());
+        response.setUserId(reservation.getUserId());
         response.setRestaurantId(reservation.getRestaurantId());
+        response.setDate(reservation.getDate());
+        response.setPeople(reservation.getPeople());
+        return response;
+    }
+
+    @Override
+    public Reservation fromReservationProjectionToReservation(ReservationProjection reservation){
+        Reservation response = new Reservation();
+        response.setId(reservation.getId());
+        response.setUser(userService.FindAndEnsureExists(reservation.getUserId()));
+        response.setRestaurant(resturantService.FindAndEnsureExist(reservation.getRestaurantId()));
         response.setDate(reservation.getDate());
         response.setPeople(reservation.getPeople());
         return response;

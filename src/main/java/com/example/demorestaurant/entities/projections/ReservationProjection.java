@@ -5,6 +5,5 @@ public interface ReservationProjection {
     String getDate();
     Integer getPeople();
     Long getRestaurantId();
-    Long getUser_Id();
-
+    Long getUserId();
 }

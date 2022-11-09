@@ -100,7 +100,7 @@ public class CeoServiceImpl implements ICeoService {
     //find a ceo by id and if not find ensure an exception
     @Override
     public Ceo FindAndEnsureExist(Long ceoId){
-        return repository.findById(ceoId).orElseThrow(() -> new NotFoundException("ceo not found"));
+        return repository.findById(ceoId).orElseThrow(NotFoundException::new);
     }
 
     private GetCeoResponse from_get(Ceo ceo){
@@ -139,7 +139,7 @@ public class CeoServiceImpl implements ICeoService {
 
     //validataion of Ceo
     private Ceo validationCeo(String email) {
-        CeoProjection ceoProjection = repository.findCeoByEmail(email).orElseThrow(() -> new NotFoundException("ceo not found"));
+        CeoProjection ceoProjection = repository.findCeoByEmail(email).orElseThrow(NotFoundException::new);
         /*if (!Objects.equals(ceoProjection.getPassword(), request.getPassword())) {
             throw new NotFoundException("ceo not found");
         }*/

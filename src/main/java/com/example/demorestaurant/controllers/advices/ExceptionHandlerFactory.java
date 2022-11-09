@@ -2,6 +2,7 @@ package com.example.demorestaurant.controllers.advices;
 
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.entities.exceptions.ExistingDataConflictException;
+import com.example.demorestaurant.entities.exceptions.InternalServerError;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.entities.exceptions.UpchiapasException;
 //import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
@@ -170,11 +171,11 @@ public class ExceptionHandlerFactory {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    private ResponseEntity<BaseResponse> handleCeoLoginException(NotFoundException exception) {
+    private ResponseEntity<BaseResponse> handleNotFoundException(NotFoundException exception) {
         BaseResponse errorResponse = BaseResponse.builder()
                 .message(exception.getLocalizedMessage())
                 .success(false)
-                .httpStatus(HttpStatus.BAD_REQUEST)
+                .httpStatus(HttpStatus.NOT_FOUND)
                 .build();
         return new ResponseEntity<>(errorResponse, errorResponse.getHttpStatus());
     }
@@ -185,6 +186,17 @@ public class ExceptionHandlerFactory {
                 .message(exception.getLocalizedMessage())
                 .success(false)
                 .httpStatus(HttpStatus.CONFLICT)
+                .build();
+        return new ResponseEntity<>(errorResponse, errorResponse.getHttpStatus());
+    }
+
+
+    @ExceptionHandler(InternalServerError.class)
+    private ResponseEntity<BaseResponse> handleInternalServerError(InternalServerError exception) {
+        BaseResponse errorResponse = BaseResponse.builder()
+                .message(exception.getLocalizedMessage())
+                .success(false)
+                .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                 .build();
         return new ResponseEntity<>(errorResponse, errorResponse.getHttpStatus());
     }
