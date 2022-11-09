@@ -12,7 +12,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetCeoResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetImageResponse;
-import com.example.demorestaurant.controllers.dtos.responses.GetRestaurantResponse;
 import com.example.demorestaurant.entities.Image;
 import com.example.demorestaurant.entities.Restaurant;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
@@ -31,6 +30,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,9 +55,9 @@ public class FileServiceImpl implements IFileService {
     private String SECRET_KEY = "CcnDvtcFQHMiecDa506XTL6RUMHA07Rkk+vRNpTo";
 
 
-    // Upload a restaurant img by ceo
+    // Upload a restaurant img by restaurant
     @Override
-    public BaseResponse uploadRestaurantImg(MultipartFile multipartFile, Long idCeo, Long idRestaurant, String img_type) {
+    public BaseResponse uploadRestaurantImages(MultipartFile multipartFile, Long idCeo, Long idRestaurant, String imgType) {
         Image image = new Image();
         String urlDirection = "";
         GetCeoResponse ceo = ceoService.get(idCeo);
@@ -65,18 +65,35 @@ public class FileServiceImpl implements IFileService {
 
         if (ValidateFileExtension(multipartFile)){
 
-            switch (img_type){
+            switch (imgType){
                 case "images":
                     urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
                             + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/restaurantImages/";
                     break;
                 case "logo":
-                    urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
-                            + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/logo/";
+                    if (ValidateNumberOfLogos(idRestaurant)){
+                        return BaseResponse.builder()
+                                .message("Existing Logo in Database")
+                                .success(Boolean.FALSE)
+                                .httpStatus(HttpStatus.CONFLICT)
+                                .build();
+                    }else {
+                        urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
+                                + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/logo/";
+                    }
+
                     break;
                 case "banner":
-                    urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
-                            + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/banner/";
+                    if(ValidateNumberOfBanners(idRestaurant)){
+                        return BaseResponse.builder()
+                                .message("Existing Banner in Database")
+                                .success(Boolean.FALSE)
+                                .httpStatus(HttpStatus.CONFLICT)
+                                .build();
+                    }else{
+                        urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
+                                + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/banner/";
+                    }
                     break;
             }
 
@@ -86,7 +103,7 @@ public class FileServiceImpl implements IFileService {
 
             try {
                 File file = convertMultiPartToFile(multipartFile);
-                String filePath = urlDirection + generateFileName(multipartFile); // aded the filename to the url
+                String filePath = urlDirection + generateFileName(multipartFile); // added the filename to the url
 
                 fileUrl = "https://" + BUCKET_NAME + "." + ENDPOINT_URL + "/" + filePath;
                 uploadFileTos3bucket(filePath, file); // Ubication, file
@@ -94,7 +111,7 @@ public class FileServiceImpl implements IFileService {
                 image.setFileUrl(fileUrl);
                 image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(idRestaurant));
                 image.setName(generateFileName(multipartFile));
-                image.setImageType(img_type);
+                image.setImageType(imgType);
 
                 repository.save(image);
 
@@ -118,28 +135,134 @@ public class FileServiceImpl implements IFileService {
 
 
     @Override
-    public String UpdateRestaurantLogo(MultipartFile file, Long idRestaurant, Long idCeo) {
-        /**
-         * Eliminar los atributos de logo, imagen y banner de restaurant
-         * Y esos atributos estarán en la tabla imagenes que tiene el tipo de imagenes
-         * Primero se creará un restaurante y no tendrá logo como tal
-         * Tendrá pero instanciada (relacionada con la tabla imagenes), extraerá el logo que tenga ahí
-         * que coincida con el id del restaurante en el que se esté hablando
-         *
-         * Una vez creado el restaurante y subida las imagenes se le pasará el Id del ceo y del restaurante
-         * para que así se haga la relacion
-         * Subir al bucket, guardar en la tabla, cuando el front haga una peticion del tipo get de un restaurante, hará
-         * a parte una peticion get que traerá el logo del restaurante en el que se esté (dos fetch)
-         * Cuando ya esté creado el restaurante y se quiera actualizar la imagen:
-         * Mandar una peticion al controlador de file, en donde se enviará una imagen, una id del restaurante y el id de ceo
-         * Se le pasan los parametros para que lo agregue al bucket del logo
-         *
-         * En si solo se basa en el la actualización de la url en la base de datos, con el valor de la url que se
-         * genero de la nueva imagen, y cómo se guardará en el mismo id de la imagen
-         */
+    public BaseResponse UpdateRestaurantLogo(MultipartFile multipartFile, Long idRestaurant, Long idCeo) {
 
-        return null;
+        Image newImage = fromProjectionToImage(repository.GetLogoImageByRestaurantId(idRestaurant)
+                .orElseThrow(()-> new NotFoundException("Logo not found")));
+
+        String urlDirection = "";
+        GetCeoResponse ceo = ceoService.get(idCeo);
+        Restaurant restaurant = restaurantService.FindRestaurantAndEnsureExist(idRestaurant);
+
+        if (ValidateFileExtension(multipartFile)){
+
+            urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
+                    + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/logo/";
+
+            String fileUrl = "";
+
+            try {
+                File file = convertMultiPartToFile(multipartFile);
+                String filePath = urlDirection + generateFileName(multipartFile); // added the filename to the url
+
+                fileUrl = "https://" + BUCKET_NAME + "." + ENDPOINT_URL + "/" + filePath;
+                uploadFileTos3bucket(filePath, file); // Ubication, file
+
+                // Obtain the old URL from the logo image that the restaurant want to update
+                String oldUrl = newImage.getFileUrl();
+                deleteFileFromS3Bucket(oldUrl); // Remove from bucket by old url provided
+
+                // Save the new URL in the DB
+                newImage.setFileUrl(fileUrl);
+                newImage.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(idRestaurant));
+                newImage.setName(generateFileName(multipartFile));
+                newImage.setImageType("logo");
+
+                repository.save(newImage);
+
+                file.delete();
+
+                return BaseResponse.builder()
+                        .data(fileUrl)
+                        .message("Image uploaded successfully")
+                        .success(Boolean.TRUE)
+                        .httpStatus(HttpStatus.OK)
+                        .build();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }else {
+            throw new NotValidException("File Not Supported");
+        }
+
+        return BaseResponse.builder()
+                .message("Image don't updated")
+                .success(Boolean.FALSE)
+                .httpStatus(HttpStatus.CONFLICT)
+                .build();
     }
+
+    @Override
+    public BaseResponse UpdateRestaurantBanner(MultipartFile multipartFile, Long idRestaurant, Long idCeo) {
+
+        Image newImage = fromProjectionToImage(repository.GetBannerImageByRestaurantId(idRestaurant)
+                .orElseThrow(()-> new NotFoundException("Banner not found")));
+
+        String urlDirection = "";
+        GetCeoResponse ceo = ceoService.get(idCeo);
+        Restaurant restaurant = restaurantService.FindRestaurantAndEnsureExist(idRestaurant);
+
+        if (ValidateFileExtension(multipartFile)){
+
+            urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
+                    + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/banner/";
+
+            String fileUrl = "";
+
+            try {
+                File file = convertMultiPartToFile(multipartFile);
+                String filePath = urlDirection + generateFileName(multipartFile); // added the filename to the url
+
+                fileUrl = "https://" + BUCKET_NAME + "." + ENDPOINT_URL + "/" + filePath;
+                uploadFileTos3bucket(filePath, file); // Ubication, file
+
+                // Obtain the old URL from the logo image that the restaurant want to update
+                String oldUrl = newImage.getFileUrl();
+                deleteFileFromS3Bucket(oldUrl); // Remove from bucket by old url provided
+
+                // Save the new URL in the DB
+                newImage.setFileUrl(fileUrl);
+                newImage.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(idRestaurant));
+                newImage.setName(generateFileName(multipartFile));
+                newImage.setImageType("Banner");
+
+                repository.save(newImage);
+
+                file.delete();
+
+                return BaseResponse.builder()
+                        .data(fileUrl)
+                        .message("Image uploaded successfully")
+                        .success(Boolean.TRUE)
+                        .httpStatus(HttpStatus.OK)
+                        .build();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }else {
+            throw new NotValidException("File Not Supported");
+        }
+
+        return BaseResponse.builder()
+                .message("Image don't updated")
+                .success(Boolean.FALSE)
+                .httpStatus(HttpStatus.CONFLICT)
+                .build();
+    }
+
+    @Override
+    public BaseResponse DeleteImage(Long idImage) {
+        repository.delete(FindImageAndEnsureExist(idImage));
+        return BaseResponse.builder()
+                .message("Image deleted correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
+    }
+
 
     // Images type images
     @Override
@@ -159,27 +282,31 @@ public class FileServiceImpl implements IFileService {
 
     // Images type logo
     @Override
-    public BaseResponse ListAllLogoImagesByRestaurantId(Long idRestaurant) {
-        List<FileProjection> files = repository.ListAllLogoImagesByRestaurantId(idRestaurant);
-        try{
-            return BaseResponse.builder()
-                    .data(files
-                            .stream()
-                            .map(this::from)
-                            .collect(Collectors.toList()))
-                    .message("list all logo images by restaurant")
-                    .success(Boolean.TRUE)
-                    .httpStatus(HttpStatus.OK)
-                    .build();
-        }catch (Error e){
-            throw new NotFoundException("Not found logos");
+    public BaseResponse GetLogoImageByRestaurantId(Long idRestaurant) {
+        Optional<FileProjection> files = repository.GetLogoImageByRestaurantId(idRestaurant);
+        if (files.isPresent()){
+            try{
+                return BaseResponse.builder()
+                        .data(files
+                                .stream()
+                                .map(this::from)
+                                .collect(Collectors.toList()))
+                        .message("list all logo images by restaurant")
+                        .success(Boolean.TRUE)
+                        .httpStatus(HttpStatus.OK)
+                        .build();
+            }catch (Error e){
+                throw new NotFoundException("Not found logos");
+            }
+        }else{
+            throw new NotFoundException("Logo not found");
         }
     }
 
     // Images type banner
     @Override
-    public BaseResponse ListAllBannerImagesByRestaurantId(Long idRestaurant) {
-        List<FileProjection> files = repository.ListAllBannerImagesByRestaurantId(idRestaurant);
+    public BaseResponse GetBannerImageByRestaurantId(Long idRestaurant) {
+        Optional<FileProjection> files = repository.GetBannerImageByRestaurantId(idRestaurant);
         return BaseResponse.builder()
                 .data(files
                         .stream()
@@ -190,17 +317,6 @@ public class FileServiceImpl implements IFileService {
                 .httpStatus(HttpStatus.OK)
                 .build();
     }
-
-    @Override
-    public Boolean ValidateFileExtension(MultipartFile file) {
-        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-        if (extension.equals("jpeg") || extension.equals("jpg") || extension.equals("png")){
-            return Boolean.TRUE;
-        }else{
-            return Boolean.FALSE;
-        }
-    }
-
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
@@ -242,29 +358,69 @@ public class FileServiceImpl implements IFileService {
         try {
             response.setId(projection.getId());
             response.setName(projection.getName());
-            response.setFile_Url(projection.getFile_url());
-            response.setImg_type(projection.getImage_type());
+            response.setFileUrl(projection.getFileUrl());
+            response.setImgType (projection.getImageType());
             return response;
         }catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("El error esta aqui");
+            throw new IllegalArgumentException("Can't transform into a GetImageResponse");
         }
     }
 
-    // File projection to Long
-    private Long FileToLong (FileProjection projection){
-            // restaurantService.FindRestaurantAndEnsureExist(projection.getId_restaurant());
-            return projection.getId_restaurant();
+
+    @Override
+    public Boolean ValidateFileExtension(MultipartFile file) {
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (extension.equals("jpeg") || extension.equals("jpg") || extension.equals("png")){
+            return Boolean.TRUE;
+        }else{
+            return Boolean.FALSE;
+        }
     }
 
+    private Boolean ValidateNumberOfBanners(Long idRestaurant){
+        Optional<FileProjection> projection = repository.GetBannerImageByRestaurantId(idRestaurant);
+
+        if (projection.isPresent()){
+            return Boolean.TRUE; // One data in Database, we cannot upload a Banner
+        }else {
+            return Boolean.FALSE; // No one in Database, we can upload a Banner
+        }
+    };
+
+    private Boolean ValidateNumberOfLogos(Long idRestaurant){
+        Optional<FileProjection> projection = repository.GetLogoImageByRestaurantId(idRestaurant);
+
+        if (projection.isPresent()){
+            return Boolean.TRUE; // One data in Database, we cannot upload a Banner
+        }else {
+            return Boolean.FALSE; // No one in Database, we can upload a Banner
+        }
+    };
+
+    private Image FindImageAndEnsureExist(Long id){
+        return repository.findById(id).orElseThrow(()->new NotFoundException("Image not found"));
+    }
+
+    private Image fromProjectionToImage(FileProjection fileProjection){
+        Image image = new Image();
+        image.setId(fileProjection.getId());
+        image.setImageType(fileProjection.getImageType());
+        image.setFileUrl(fileProjection.getFileUrl());
+        image.setRestaurant(restaurantService.FindRestaurantAndEnsureExist(fileProjection.getIdRestaurant()));
+        return image;
+    }
+
+
+     /*
     // Image to GetImageResponse
     private GetImageResponse from_get(Image image){
         GetImageResponse response = new GetImageResponse();
         response.setId(image.getId());
         response.setName(image.getName());
-        response.setFile_Url(image.getFileUrl());
-        response.setImg_type(image.getImageType());
+        response.setFileUrl (image.getFileUrl());
+        response.setImgType(image.getImageType());
         return response;
-    }
+    }*/
 
 
 

@@ -5,15 +5,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface IFileService {
 
-    BaseResponse uploadRestaurantImg(MultipartFile multipartFile, Long idCeo, Long idRestaurant, String img_type);
+    BaseResponse uploadRestaurantImages(MultipartFile multipartFile, Long idCeo, Long idRestaurant, String img_type);
 
     BaseResponse listAllImagesByRestaurantId(Long idRestaurant);
 
-    BaseResponse ListAllLogoImagesByRestaurantId(Long idRestaurant);
+    BaseResponse GetLogoImageByRestaurantId(Long idRestaurant);
 
-    BaseResponse ListAllBannerImagesByRestaurantId(Long idRestaurant);
+    BaseResponse GetBannerImageByRestaurantId(Long idRestaurant);
 
     Boolean ValidateFileExtension(MultipartFile file);
 
-    String UpdateRestaurantLogo(MultipartFile file, Long idRestaurant, Long idCeo);
+    BaseResponse UpdateRestaurantLogo(MultipartFile multipartFile, Long idRestaurant, Long idCeo);
+
+    BaseResponse UpdateRestaurantBanner(MultipartFile multipartFile, Long idRestaurant, Long idCeo);
+
+    BaseResponse DeleteImage(Long idImage);
 }

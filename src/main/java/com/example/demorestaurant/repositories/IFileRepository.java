@@ -8,21 +8,23 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IFileRepository extends JpaRepository<Image, Long> {
 
     @Query(value = "select images.* from images " +
-            "where images.restaurant_id = :restaurant_id and images.image_type = 'images'", nativeQuery = true)
-    List<FileProjection> listAllImagesByRestaurantId(Long restaurant_id);
+            "where images.restaurant_id = :idRestaurant and images.image_type = 'images'", nativeQuery = true)
+    List<FileProjection> listAllImagesByRestaurantId(Long idRestaurant);
 
     @Query(value = "select images.* from images " +
-            "where images.restaurant_id = :restaurant_id and images.image_type = 'logo'", nativeQuery = true)
-    List<FileProjection> ListAllLogoImagesByRestaurantId(Long restaurant_id);
+            "where images.restaurant_id = :idRestaurant and images.image_type = 'logo'", nativeQuery = true)
+    Optional<FileProjection> GetLogoImageByRestaurantId(Long idRestaurant);
 
+    // Optional<FileProjection> getByRestaurantId
     @Query(value = "select images.* from images " +
-            "where images.restaurant_id = :restaurant_id and images.image_type = 'banner'", nativeQuery = true)
-    List<FileProjection> ListAllBannerImagesByRestaurantId(Long restaurant_id);
+            "where images.restaurant_id = :idRestaurant and images.image_type = 'banner'", nativeQuery = true)
+    Optional<FileProjection> GetBannerImageByRestaurantId(Long idRestaurant);
 
 
 

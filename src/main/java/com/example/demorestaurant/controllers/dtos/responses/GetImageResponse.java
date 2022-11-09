@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter @Setter
 public class GetImageResponse {
     private Long id;
-    private String file_Url;
+    private String fileUrl;
     private String name;
-    private String img_type;
+    private String imgType;
 }

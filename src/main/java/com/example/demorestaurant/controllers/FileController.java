@@ -9,37 +9,58 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("uplFile")
+@RequestMapping("file")
 public class FileController {
 
     @Autowired
     private IFileService service;
 
-    // The @RequestParam has a section in postman, and it is not necessary to put it in the sending path
     @PostMapping
     public ResponseEntity<BaseResponse> uploadRestaurantImg(@RequestParam MultipartFile file,
-                                                            @RequestParam String img_type,
+                                                            @RequestParam String imgType,
                                                             @RequestParam Long idCeo,
                                                             @RequestParam Long idRestaurant) {
-        BaseResponse baseResponse = service.uploadRestaurantImg(file, idCeo, idRestaurant, img_type);
+        BaseResponse baseResponse = service.uploadRestaurantImages(file, idCeo, idRestaurant, imgType);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
-    @GetMapping("logo/{restaurant_id}")
-    public ResponseEntity<BaseResponse> ListAllLogoImagesByRestaurantId(@PathVariable Long restaurant_id){
-        BaseResponse baseResponse = service.ListAllLogoImagesByRestaurantId(restaurant_id);
+    @PutMapping("updateLogo")
+    public ResponseEntity<BaseResponse> UpdateRestaurantLogo(@RequestParam MultipartFile file,
+                                                             @RequestParam Long idCeo,
+                                                             @RequestParam Long idRestaurant) {
+        BaseResponse baseResponse = service.UpdateRestaurantLogo(file, idCeo, idRestaurant);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
-    @GetMapping("images/{restaurant_id}")
-    public ResponseEntity<BaseResponse> listAllImagesByRestaurantId(@PathVariable Long restaurant_id){
-        BaseResponse baseResponse = service.listAllImagesByRestaurantId(restaurant_id);
+    @PutMapping("updateBanner")
+    public ResponseEntity<BaseResponse> UpdateRestaurantBanner(@RequestParam MultipartFile file,
+                                                               @RequestParam Long idCeo,
+                                                               @RequestParam Long idRestaurant) {
+        BaseResponse baseResponse = service.UpdateRestaurantBanner(file, idCeo, idRestaurant);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
-    @GetMapping("banner/{restaurant_id}")
-    public ResponseEntity<BaseResponse>  ListAllBannerImagesByRestaurantId(@PathVariable Long restaurant_id){
-        BaseResponse baseResponse = service.ListAllBannerImagesByRestaurantId(restaurant_id);
+    @DeleteMapping("deleteImage/{idImage}")
+    public ResponseEntity<BaseResponse> DeleteImage(@PathVariable Long idImage){
+        BaseResponse baseResponse = service.DeleteImage(idImage);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
+    @GetMapping("getLogo/{idRestaurant}")
+    public ResponseEntity<BaseResponse> GetLogoImageByRestaurantId(@PathVariable Long idRestaurant){
+        BaseResponse baseResponse = service.GetLogoImageByRestaurantId(idRestaurant);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
+    @GetMapping("getBanner/{idRestaurant}")
+    public ResponseEntity<BaseResponse>  GetBannerImageByRestaurantId(@PathVariable Long idRestaurant){
+        BaseResponse baseResponse = service.GetBannerImageByRestaurantId(idRestaurant);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
+    @GetMapping("ListImages/{idRestaurant}")
+    public ResponseEntity<BaseResponse> listAllImagesByRestaurantId(@PathVariable Long idRestaurant){
+        BaseResponse baseResponse = service.listAllImagesByRestaurantId(idRestaurant);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
