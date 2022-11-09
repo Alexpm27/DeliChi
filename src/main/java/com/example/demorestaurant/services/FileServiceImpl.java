@@ -12,7 +12,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetCeoResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetImageResponse;
-import com.example.demorestaurant.controllers.dtos.responses.GetRestaurantResponse;
 import com.example.demorestaurant.entities.Image;
 import com.example.demorestaurant.entities.Restaurant;
 import com.example.demorestaurant.entities.exceptions.InternalServerError;
@@ -59,7 +58,7 @@ public class FileServiceImpl implements IFileService {
 
     // Upload a restaurant img by restaurant
     @Override
-    public BaseResponse uploadRestaurantImages(MultipartFile multipartFile, Long idCeo, Long idRestaurant, String imgType) {
+    public BaseResponse uploadRestaurantImages(MultipartFile multipartFile, Long idCeo, Long idRestaurant) {
         Image image = new Image();
         String urlDirection = "";
         GetCeoResponse ceo = ceoService.get(idCeo);
@@ -67,37 +66,8 @@ public class FileServiceImpl implements IFileService {
 
         if (ValidateFileExtension(multipartFile)){
 
-            switch (imgType){
-                case "images":
-                    urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
-                            + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/restaurantImages/";
-                    break;
-                case "logo":
-                    if (ValidateNumberOfLogos(idRestaurant)){
-                        return BaseResponse.builder()
-                                .message("Existing Logo in Database")
-                                .success(Boolean.FALSE)
-                                .httpStatus(HttpStatus.CONFLICT)
-                                .build();
-                    }else {
-                        urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
-                                + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/logo/";
-                    }
-
-                    break;
-                case "banner":
-                    if(ValidateNumberOfBanners(idRestaurant)){
-                        return BaseResponse.builder()
-                                .message("Existing Banner in Database")
-                                .success(Boolean.FALSE)
-                                .httpStatus(HttpStatus.CONFLICT)
-                                .build();
-                    }else{
-                        urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
-                                + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/banner/";
-                    }
-                    break;
-            }
+            urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
+                    + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/restaurantImages/";
 
             // Create the urlDirection where the img will be uploaded
 
@@ -113,7 +83,7 @@ public class FileServiceImpl implements IFileService {
                 image.setFileUrl(fileUrl);
                 image.setRestaurant(restaurantService.FindAndEnsureExist(idRestaurant));
                 image.setName(generateFileName(multipartFile));
-                image.setImageType(imgType);
+                image.setImageType("images");
 
                 repository.save(image);
 
@@ -135,6 +105,122 @@ public class FileServiceImpl implements IFileService {
 
     }
 
+    @Override
+    public BaseResponse uploadRestaurantLogoImage(MultipartFile multipartFile, Long idCeo, Long idRestaurant) {
+
+        Image image = new Image();
+        String urlDirection = "";
+        GetCeoResponse ceo = ceoService.get(idCeo);
+        Restaurant restaurant = restaurantService.FindAndEnsureExist(idRestaurant);
+
+        if(ValidateFileExtension(multipartFile)){
+
+            if (ValidateNumberOfLogos(idRestaurant)){
+                return BaseResponse.builder()
+                        .message("Existing Logo in Database")
+                        .success(Boolean.FALSE)
+                        .httpStatus(HttpStatus.CONFLICT)
+                        .build();
+            }else {
+                urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
+                        + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/logo/";
+            }
+
+            // Create the urlDirection where the img will be uploaded
+
+            String fileUrl = "";
+
+            try {
+                File file = convertMultiPartToFile(multipartFile);
+                String filePath = urlDirection + generateFileName(multipartFile); // added the filename to the url
+
+                fileUrl = "https://" + BUCKET_NAME + "." + ENDPOINT_URL + "/" + filePath;
+                uploadFileTos3bucket(filePath, file); // Ubication, file
+
+                image.setFileUrl(fileUrl);
+                image.setRestaurant(restaurantService.FindAndEnsureExist(idRestaurant));
+                image.setName(generateFileName(multipartFile));
+                image.setImageType("logo");
+
+                repository.save(image);
+
+                file.delete();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return BaseResponse.builder()
+                    .data(fileUrl)
+                    .message("Image uploaded successfully")
+                    .success(Boolean.TRUE)
+                    .httpStatus(HttpStatus.OK)
+                    .build();
+
+        }else {
+            throw new NotValidException("File Not Supported");
+        }
+
+
+    }
+
+    @Override
+    public BaseResponse uploadRestaurantBannerImage(MultipartFile multipartFile, Long idCeo, Long idRestaurant) {
+
+        Image image = new Image();
+        String urlDirection = "";
+        GetCeoResponse ceo = ceoService.get(idCeo);
+        Restaurant restaurant = restaurantService.FindAndEnsureExist(idRestaurant);
+
+        if(ValidateFileExtension(multipartFile)){
+
+            if(ValidateNumberOfBanners(idRestaurant)){
+                return BaseResponse.builder()
+                        .message("Existing Banner in Database")
+                        .success(Boolean.FALSE)
+                        .httpStatus(HttpStatus.CONFLICT)
+                        .build();
+            }else{
+                urlDirection = "data/bussines_info/ceo/" + ceo.getEmail()
+                        + "/properties/ceo_restaurants/" + restaurant.getName().replace(" ","_") + "/images/banner/";
+            }
+
+            // Create the urlDirection where the img will be uploaded
+
+            String fileUrl = "";
+
+            try {
+                File file = convertMultiPartToFile(multipartFile);
+                String filePath = urlDirection + generateFileName(multipartFile); // added the filename to the url
+
+                fileUrl = "https://" + BUCKET_NAME + "." + ENDPOINT_URL + "/" + filePath;
+                uploadFileTos3bucket(filePath, file); // Ubication, file
+
+                image.setFileUrl(fileUrl);
+                image.setRestaurant(restaurantService.FindAndEnsureExist(idRestaurant));
+                image.setName(generateFileName(multipartFile));
+                image.setImageType("banner");
+
+                repository.save(image);
+
+                file.delete();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return BaseResponse.builder()
+                    .data(fileUrl)
+                    .message("Image uploaded successfully")
+                    .success(Boolean.TRUE)
+                    .httpStatus(HttpStatus.OK)
+                    .build();
+
+        }else {
+            throw new NotValidException("File Not Supported");
+        }
+
+    }
 
     @Override
     public BaseResponse UpdateRestaurantLogo(MultipartFile multipartFile, Long idRestaurant, Long idCeo) {

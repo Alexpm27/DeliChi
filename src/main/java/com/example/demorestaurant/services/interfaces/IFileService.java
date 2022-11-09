@@ -7,7 +7,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface IFileService {
 
-    BaseResponse uploadRestaurantImages(MultipartFile multipartFile, Long idCeo, Long idRestaurant, String img_type);
+    BaseResponse uploadRestaurantImages(MultipartFile multipartFile, Long idCeo, Long idRestaurant);
+
+    BaseResponse uploadRestaurantLogoImage(MultipartFile multipartFile, Long idCeo, Long idRestaurant);
+
+    BaseResponse uploadRestaurantBannerImage(MultipartFile multipartFile, Long idCeo, Long idRestaurant);
 
     BaseResponse listAllImagesByRestaurantId(Long idRestaurant);
 

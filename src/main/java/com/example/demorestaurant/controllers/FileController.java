@@ -15,12 +15,27 @@ public class FileController {
     @Autowired
     private IFileService service;
 
-    @PostMapping
+    @PostMapping("ceo/{ceoId}/restaurant/{restaurantId}/image")
     public ResponseEntity<BaseResponse> uploadRestaurantImg(@RequestParam MultipartFile file,
-                                                            @RequestParam String imgType,
-                                                            @RequestParam Long idCeo,
-                                                            @RequestParam Long idRestaurant) {
-        BaseResponse baseResponse = service.uploadRestaurantImages(file, idCeo, idRestaurant, imgType);
+                                                            @PathVariable Long ceoId,
+                                                            @PathVariable Long restaurantId) {
+        BaseResponse baseResponse = service.uploadRestaurantImages(file, ceoId, restaurantId);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
+    @PostMapping("ceo/{ceoId}/restaurant/{restaurantId}/logo")
+    public ResponseEntity<BaseResponse> uploadLogoImg(@RequestParam MultipartFile file,
+                                                      @PathVariable Long ceoId,
+                                                      @PathVariable Long restaurantId){
+        BaseResponse baseResponse = service.uploadRestaurantLogoImage(file, ceoId, restaurantId);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
+    @PostMapping("ceo/{ceoId}/restaurant/{restaurantId}/banner")
+    public ResponseEntity<BaseResponse> uploadBannerImg(@RequestParam MultipartFile file,
+                                                      @PathVariable Long ceoId,
+                                                      @PathVariable Long restaurantId){
+        BaseResponse baseResponse = service.uploadRestaurantBannerImage(file, ceoId, restaurantId);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
