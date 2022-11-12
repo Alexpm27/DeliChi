@@ -10,6 +10,4 @@ public class CreateCommentRequest {
     private String date;
     private String content;
     private Integer score;
-    private Long user_id;
-    private Long restaurant_id;
 }

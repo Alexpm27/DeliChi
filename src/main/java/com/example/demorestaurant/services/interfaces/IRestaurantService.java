@@ -3,26 +3,32 @@ package com.example.demorestaurant.services.interfaces;
 import com.example.demorestaurant.controllers.dtos.request.CreateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
+import com.example.demorestaurant.controllers.dtos.responses.GetImageResponse;
+import com.example.demorestaurant.controllers.dtos.responses.RestaurantResponse;
 import com.example.demorestaurant.entities.Restaurant;
 
 import java.util.List;
 
 public interface IRestaurantService {
-    BaseResponse create(CreateRestaurantRequest request, Long ceoId, Long zoneId);
 
     BaseResponse get(Long id);
 
+    BaseResponse create(CreateRestaurantRequest request, Long ceoId, Long zoneId);
+
     BaseResponse list();
+
+    BaseResponse listAllRestaurantsByName(String name);
 
     BaseResponse update(UpdateRestaurantRequest request, Long id, Long zoneId);
 
     BaseResponse delete(Long id);
 
-    BaseResponse listAllRestaurantsByCeoId(Long ceoId);
+    BaseResponse listAllImagesByRestaurantId(Long restaurantId);
 
-    BaseResponse listAllRestaurantsByName(String name);
+    Restaurant findAndEnsureExist(Long id);
 
-    BaseResponse listAllRestaurantsByZoneId(Long zoneId);
+    RestaurantResponse fromRestaurantToRestaurantResponse(Restaurant restaurant);
 
-    List<Restaurant> listAllRestaurantsByCeoId2(Long ceoId);
+    List<GetImageResponse> getImageResponsesList(Long id);
+
 }

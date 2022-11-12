@@ -12,11 +12,7 @@ public class CreateCeoRequest {
     @NotNull
     @NotBlank
     private String name;
-    @NotNull
-    @NotBlank
     private String firstSurname;
-    @NotNull
-    @NotBlank
     private String secondSurname;
     @NotNull
     private Long phoneNumber;

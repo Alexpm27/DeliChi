@@ -12,6 +12,4 @@ import java.util.Optional;
 @Repository
 public interface IReservationRepository extends JpaRepository<Reservation, Long> {
 
-    Optional<List<ReservationProjection>> findAllByRestaurant_Id(Long restaurantId);
-
 }

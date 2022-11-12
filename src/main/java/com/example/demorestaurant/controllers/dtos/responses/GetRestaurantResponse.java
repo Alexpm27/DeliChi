@@ -1,6 +1,5 @@
 package com.example.demorestaurant.controllers.dtos.responses;
 
-import com.example.demorestaurant.entities.Reservation;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,9 +18,9 @@ public class GetRestaurantResponse {
     private String schedule;
     private String menu;
     private String kitchen;
-    private Long zoneId;
-    private Long CeoId;
-    private List<CommentResponse> comments;
+    private GetZoneResponse zone;
+    private CeoResponse ceo;
+    private List<GetCommentResponse> comments;
     private List<GetReservationResponse> reservations;
     private List<GetImageResponse> images;
 }

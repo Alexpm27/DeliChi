@@ -37,7 +37,8 @@ public class Restaurant {
     @Column(nullable = false, unique = true)
     private Long phoneNumber;
 
-    @Column(length = 500)
+    @Column(nullable = false, length = 500)
+    @NotBlank
     private String description;
 
     @Column(length = 500)

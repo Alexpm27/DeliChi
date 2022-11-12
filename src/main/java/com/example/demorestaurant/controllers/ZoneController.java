@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("zone")
 public class ZoneController {
@@ -16,14 +18,21 @@ public class ZoneController {
     private IZoneService service;
 
     @GetMapping("{id}")
-    public ResponseEntity<BaseResponse> get(@PathVariable Long id){
+    public ResponseEntity<BaseResponse> get(@Valid @PathVariable Long id){
         BaseResponse baseResponse = service.get(id);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @GetMapping("zones")
-    public ResponseEntity<BaseResponse> ListAllZones(){
-        BaseResponse baseResponse = service.ListAllZones();
+    public ResponseEntity<BaseResponse> list(){
+        BaseResponse baseResponse = service.list();
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
+
+    @GetMapping("{id}/restaurants")
+    public ResponseEntity<BaseResponse> listAllRestaurantByZoneId(@Valid @PathVariable Long id){
+        BaseResponse baseResponse = service.listAllRestaurantByZoneId(id);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
 }

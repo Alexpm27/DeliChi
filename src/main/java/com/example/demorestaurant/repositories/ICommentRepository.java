@@ -12,6 +12,4 @@ import java.util.Optional;
 @Repository
 public interface ICommentRepository extends JpaRepository<Comment, Long> {
 
-    Optional<List<CommentProjection>> findAllByRestaurant_Id(Long id);
-
 }

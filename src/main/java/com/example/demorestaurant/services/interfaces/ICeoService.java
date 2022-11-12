@@ -7,18 +7,19 @@ import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.Ceo;
 
 public interface ICeoService {
-    BaseResponse create(CreateCeoRequest request);
-
-    GetCeoResponse get(Long id);
 
     BaseResponse get(String email);
+
+    BaseResponse listAllRestaurantByCeoId(Long id);
+
+    BaseResponse create(CreateCeoRequest request);
 
     BaseResponse update(UpdateCeoRequest request, Long id);
 
     BaseResponse delete(Long id);
 
-    Ceo FindAndEnsureExist(Long id);
+    Ceo findAndEnsureExist(Long id);
 
-    //BaseResponse validEmailAndPhoneNumber();
-    //List<RestaurantResponse> listRestaurantsFromCeoId(Long ceoId);
+    CeoResponse fromCeoToCeoResponse(Ceo ceo);
+
 }

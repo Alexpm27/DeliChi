@@ -4,10 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @Builder
-public class GetZoneResponse {
+public class ImageResponse {
     private Long id;
-    private String name;
+    private String fileUrl;
+    private String imageType;
 }

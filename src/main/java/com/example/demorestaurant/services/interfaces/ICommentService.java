@@ -3,21 +3,21 @@ package com.example.demorestaurant.services.interfaces;
 import com.example.demorestaurant.controllers.dtos.request.CreateCommentRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateCommentRequest;
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
+import com.example.demorestaurant.controllers.dtos.responses.CommentResponse;
+import com.example.demorestaurant.controllers.dtos.responses.GetCommentResponse;
 import com.example.demorestaurant.entities.Comment;
 import com.example.demorestaurant.entities.projections.CommentProjection;
 
+import java.util.List;
+
 public interface ICommentService {
+    BaseResponse get(Long id);
 
-    BaseResponse createComment (CreateCommentRequest request);
+    BaseResponse create(CreateCommentRequest request, Long userId, Long restaurantId);
 
-    BaseResponse getCommentById(Long id);
+    BaseResponse update(UpdateCommentRequest request, Long id);
 
-    BaseResponse listAllCommentByRestaurantId(Long restaurantId);
+    BaseResponse delete(Long id);
 
-    BaseResponse updateComment(UpdateCommentRequest request, Long id);
-
-    void delete(Long id);
-
-    Comment from(CommentProjection commentProjection);
-
+    CommentResponse fromCommentToCommentResponse(Comment comment);
 }

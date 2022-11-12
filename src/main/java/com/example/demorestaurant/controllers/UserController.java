@@ -8,9 +8,12 @@ import com.example.demorestaurant.controllers.dtos.responses.GetUserResponse;
 import com.example.demorestaurant.controllers.dtos.responses.UpdateUserResponse;
 import com.example.demorestaurant.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Id;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import java.util.List;
 
 @RestController
@@ -20,37 +23,34 @@ public class UserController {
     @Autowired
     private IUserService service;
 
-    @PostMapping
-    public ResponseEntity<BaseResponse> createUser (@RequestBody CreateUserRequest request){
-        BaseResponse baseResponse = service.createUser(request);
+    @GetMapping("{email}")
+    public ResponseEntity<BaseResponse> get(@Valid @Email @PathVariable String email){
+        BaseResponse baseResponse = service.get(email);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
-    @GetMapping
-    public ResponseEntity<BaseResponse> ListUsers (){
-        BaseResponse baseResponse = service.userList();
-        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
-    }
-
-    @GetMapping("{id}")
-    public GetUserResponse getUsers(@PathVariable Long id){
-        return service.getUserById(id);
-    }
-
-    @GetMapping("reservations/user/{userId}")
-    public ResponseEntity<BaseResponse> ListReservationsByUserId(@PathVariable Long userId){
+    @GetMapping("{userId}/reservations")
+    public ResponseEntity<BaseResponse> ListReservationsByUserId(@Valid @PathVariable Long userId){
         BaseResponse baseResponse = service.ListReservationsByUserId(userId);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
+    @PostMapping
+    public ResponseEntity<BaseResponse> create(@Valid @RequestBody CreateUserRequest request){
+        BaseResponse baseResponse = service.create(request);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
     @PutMapping("{id}")
-    public ResponseEntity<BaseResponse> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequest request){
-        BaseResponse baseResponse = service.updateUser(id, request);
+    public ResponseEntity<BaseResponse> update(@Valid @RequestBody UpdateUserRequest request, @Valid @PathVariable Long id){
+        BaseResponse baseResponse = service.update(request, id);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @DeleteMapping("{id}")
-    public void deleteUser(@PathVariable Long id){
-        service.deleteUser(id);
+    public ResponseEntity<BaseResponse> delete(@Valid @PathVariable Long id){
+        BaseResponse baseResponse = service.delete(id);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
+
 }

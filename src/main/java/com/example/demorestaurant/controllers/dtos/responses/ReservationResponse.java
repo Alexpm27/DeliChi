@@ -4,10 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
-@Getter
-@Builder
-public class GetZoneResponse {
+@Getter @Setter @Builder
+public class ReservationResponse {
     private Long id;
-    private String name;
+    private String date;
+    private Integer people;
 }

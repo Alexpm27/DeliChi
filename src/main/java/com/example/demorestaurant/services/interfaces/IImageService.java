@@ -1,11 +1,14 @@
 package com.example.demorestaurant.services.interfaces;
 
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
+import com.example.demorestaurant.controllers.dtos.responses.GetImageResponse;
 import com.example.demorestaurant.entities.Image;
 import com.example.demorestaurant.entities.projections.FileProjection;
 import org.springframework.web.multipart.MultipartFile;
 
-public interface IFileService {
+import java.util.List;
+
+public interface IImageService {
 
     BaseResponse uploadRestaurantImages(MultipartFile multipartFile, Long idCeo, Long idRestaurant);
 
@@ -28,4 +31,5 @@ public interface IFileService {
     BaseResponse DeleteImage(Long idImage);
 
     Image fromFileProjectionToImage(FileProjection projection);
+
 }

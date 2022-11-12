@@ -11,6 +11,6 @@ public class GetReservationResponse {
     private Long id;
     private String date;
     private Integer people;
-    private Long restaurant_id;
-    private Long user_id;
+    private RestaurantResponse restaurant;
+    private UserResponse user;
 }

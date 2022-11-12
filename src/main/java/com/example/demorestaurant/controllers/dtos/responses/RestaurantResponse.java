@@ -4,10 +4,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
+import java.util.List;
+
 @Getter
+@Setter
 @Builder
-public class GetZoneResponse {
+public class RestaurantResponse {
     private Long id;
     private String name;
+    private List<GetImageResponse> image;
 }

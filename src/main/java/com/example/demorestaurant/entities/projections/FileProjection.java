@@ -6,5 +6,5 @@ public interface FileProjection {
     String getFileUrl();
     String getName();
     String getImageType();
-    Long getIdRestaurant();
+    Long getRestaurantId();
 }

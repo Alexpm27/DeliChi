@@ -8,6 +8,13 @@ import java.util.List;
 
 public interface IZoneService {
     BaseResponse get(Long id);
-    BaseResponse ListAllZones();
-    Zone FindAndEnsureExist(Long id);
+
+    BaseResponse list();
+
+    Zone findAndEnsureExist(Long id);
+
+    GetZoneResponse from(Zone zone);
+
+    BaseResponse listAllRestaurantByZoneId(Long id);
+
 }

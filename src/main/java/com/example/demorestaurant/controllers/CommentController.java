@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("comment")
 public class CommentController {
@@ -15,33 +17,30 @@ public class CommentController {
     @Autowired
     private ICommentService service;
 
-    @PostMapping
-    public ResponseEntity<BaseResponse> createComment(@RequestBody CreateCommentRequest request){
-        BaseResponse baseResponse = service.createComment(request);
+    @GetMapping("{id}")
+    public ResponseEntity<BaseResponse> get(@Valid @PathVariable Long id){
+        BaseResponse baseResponse = service.get(id);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
+    @PostMapping("user/{userId}/restaurant/{restaurantId}")
+    public ResponseEntity<BaseResponse> create(@Valid @RequestBody CreateCommentRequest request,
+                                               @Valid @PathVariable Long userId,
+                                               @Valid @PathVariable Long restaurantId){
+        BaseResponse baseResponse = service.create(request, userId, restaurantId);
         return new ResponseEntity<>(baseResponse,baseResponse.getHttpStatus());
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<BaseResponse> getCommentById(@PathVariable Long id){
-        BaseResponse baseResponse = service.getCommentById(id);
-        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
-    }
-
-    @GetMapping("restaurant/{restaurantId}/comments")
-    public ResponseEntity<BaseResponse> listAllCommentByRestaurantId(@PathVariable Long restaurantId){
-        BaseResponse baseResponse = service.listAllCommentByRestaurantId(restaurantId);
-        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
-    }
-
     @PutMapping("{id}")
-    public ResponseEntity<BaseResponse> updateComment(@RequestBody UpdateCommentRequest request, @PathVariable Long id){
-        BaseResponse baseResponse = service.updateComment(request, id);
+    public ResponseEntity<BaseResponse> update(@Valid @RequestBody UpdateCommentRequest request, @Valid @PathVariable Long id){
+        BaseResponse baseResponse = service.update(request, id);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable Long id){
-        service.delete(id);
+    public ResponseEntity<BaseResponse> delete(@Valid @PathVariable Long id){
+        BaseResponse baseResponse = service.delete(id);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
 }

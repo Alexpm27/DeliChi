@@ -10,6 +10,5 @@ import lombok.Setter;
 public class GetImageResponse {
     private Long id;
     private String fileUrl;
-    private String name;
-    private String imgType;
+    private String imageType;
 }

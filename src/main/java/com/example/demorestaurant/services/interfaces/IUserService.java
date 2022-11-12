@@ -3,23 +3,25 @@ package com.example.demorestaurant.services.interfaces;
 import com.example.demorestaurant.controllers.dtos.request.CreateUserRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateUserRequest;
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
-import com.example.demorestaurant.controllers.dtos.responses.CreateUserResponse;
-import com.example.demorestaurant.controllers.dtos.responses.GetUserResponse;
-import com.example.demorestaurant.controllers.dtos.responses.UpdateUserResponse;
-
-import java.util.List;
+import com.example.demorestaurant.controllers.dtos.responses.RestaurantResponse;
+import com.example.demorestaurant.controllers.dtos.responses.UserResponse;
+import com.example.demorestaurant.entities.Restaurant;
+import com.example.demorestaurant.entities.User;
 
 public interface IUserService {
 
-    GetUserResponse getUserById (Long id);
+    BaseResponse get(String email);
 
-    BaseResponse userList ();
+    BaseResponse create(CreateUserRequest request);
 
-    BaseResponse createUser (CreateUserRequest request);
+    BaseResponse update(UpdateUserRequest request, Long id);
 
-    BaseResponse updateUser (Long id, UpdateUserRequest request);
-
-    void deleteUser (Long id);
+    BaseResponse delete (Long id);
 
     BaseResponse ListReservationsByUserId(Long userId);
+
+    UserResponse fromUserToUserResponse(User user);
+
+    User findAndEnsureExists(Long id);
+
 }

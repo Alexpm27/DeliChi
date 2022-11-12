@@ -1,6 +1,9 @@
 package com.example.demorestaurant.services;
+
 import com.example.demorestaurant.controllers.dtos.responses.BaseResponse;
 import com.example.demorestaurant.controllers.dtos.responses.GetZoneResponse;
+import com.example.demorestaurant.controllers.dtos.responses.RestaurantResponse;
+import com.example.demorestaurant.entities.Restaurant;
 import com.example.demorestaurant.entities.Zone;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
 import com.example.demorestaurant.repositories.IZoneRepository;
@@ -20,37 +23,72 @@ public class ZoneServiceImpl implements IZoneService {
 
     @Override
     public BaseResponse get(Long id) {
-        Zone zone = FindAndEnsureExist(id);
         return BaseResponse.builder()
-                .data(from(zone))
+                .data(from(findAndEnsureExist(id)))
                 .message("zones get correctly")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
-    public BaseResponse ListAllZones() {
-        List<Zone> zones = repository.findAll();
-        List<GetZoneResponse> responses = zones.stream()
-                .map(this::from)
-                .collect(Collectors.toList());
+    public BaseResponse list() {
         return BaseResponse.builder()
-                .data(responses)
+                .data(getZoneResponseList())
                 .message("zones list correctly")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
 
-    private GetZoneResponse from(Zone zone){
-        GetZoneResponse response = new GetZoneResponse();
-        response.setId(zone.getId());
-        response.setName(zone.getName());
-        return response;
+    @Override
+    public BaseResponse listAllRestaurantByZoneId(Long id){
+        return BaseResponse.builder()
+                .data(getRestaurantResponseListByZoneId(id))
+                .message("Restaurant List By Zone Id")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 
     @Override
-    public Zone FindAndEnsureExist(Long id){
+    public Zone findAndEnsureExist(Long id){
         return repository.findById(id).orElseThrow(NotFoundException::new);
+    }
+
+    @Override
+    public GetZoneResponse from(Zone zone){
+        return GetZoneResponse.builder()
+                .id(zone.getId())
+                .name(zone.getName())
+                .build();
+    }
+
+    private List<GetZoneResponse> getZoneResponseList(){
+        return getZoneList().stream()
+                .map(this::from)
+                .collect(Collectors.toList());
+    }
+
+    private List<Zone> getZoneList(){
+        return repository.findAll();
+    }
+
+    private List<RestaurantResponse> getRestaurantResponseListByZoneId(Long id){
+        return getRestaurantListByZoneId(id)
+                .stream()
+                .map(this::from)
+                .collect(Collectors.toList());
+    }
+
+    private List<Restaurant> getRestaurantListByZoneId(Long id){
+        return findAndEnsureExist(id)
+                .getRestaurants();
+    }
+
+    private RestaurantResponse from(Restaurant restaurant){
+        return RestaurantResponse.builder()
+                .name(restaurant.getName())
+                .id(restaurant.getId())
+                .build();
     }
 
 }

@@ -2,18 +2,19 @@ package com.example.demorestaurant.services;
 
 import com.example.demorestaurant.controllers.dtos.request.CreateReservationRequest;
 import com.example.demorestaurant.controllers.dtos.request.UpdateReservationRequest;
-import com.example.demorestaurant.controllers.dtos.request.UpdateRestaurantRequest;
 import com.example.demorestaurant.controllers.dtos.responses.*;
 import com.example.demorestaurant.entities.Reservation;
 import com.example.demorestaurant.entities.exceptions.NotFoundException;
-import com.example.demorestaurant.entities.projections.ReservationProjection;
 import com.example.demorestaurant.repositories.IReservationRepository;
 import com.example.demorestaurant.services.interfaces.IReservationService;
+import com.example.demorestaurant.services.interfaces.IRestaurantService;
+import com.example.demorestaurant.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -24,120 +25,109 @@ public class ReservationServiceImpl implements IReservationService {
     private IReservationRepository repository;
 
     @Autowired
-    private UserServiceImpl userService;
+    private IUserService userService;
 
     @Autowired
-    private RestaurantServiceImpl resturantService;
+    private IRestaurantService restaurantService;
 
     @Override
-    public BaseResponse create(CreateReservationRequest request) {
-        Reservation reservation = from(request);
+    public BaseResponse get(Long id) {
         return BaseResponse.builder()
-                .data(from(repository.save(reservation)))
-                .message("reservation created correctly")
+                .data(fromReservationToGetReservationResponse(findAndEnsureExist(id)))
+                .message("Reservation Obtained")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
-    public GetReservationResponse get(Long id) {
-        return from_get(FindAndEnsureExist(id));
+    public BaseResponse create(CreateReservationRequest request, Long userId, Long restaurantId) {
+        return BaseResponse.builder()
+                .data(from(repository.save(from(request, userId, restaurantId))))
+                .message("Reservation Created Correctly")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
     public BaseResponse update(UpdateReservationRequest request, Long id) {
-        Reservation reservation = FindAndEnsureExist(id);
-        reservation.setDate(request.getDate());
-        reservation.setPeople(request.getPeople());
         return BaseResponse.builder()
-                .data(from(repository.save(reservation)))
+                .data(fromReservationToUpdateReservationResponse(repository.save(validationUpdateDateReservation(request, id))))
                 .message("reservation updated correctly")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
-    public void delete(Long id) {
-        repository.delete(FindAndEnsureExist(id));
-    }
-
-    @Override
-    public BaseResponse ListReservationByRestaurantId(Long restaurantId) {
-        List<ReservationProjection> reservation = repository.findAllByRestaurant_Id(restaurantId).orElseThrow(NotFoundException::new);
-        List<GetReservationByRestaurantIdResponse> responses = reservation.stream()
-                .map(this::from)
-                .collect(Collectors.toList());
+    public BaseResponse delete(Long id) {
+        repository.delete(findAndEnsureExist(id));
         return BaseResponse.builder()
-                .data(responses)
-                .message("reservation list by teacher id")
+                .message("Reservation Deleted Correctly")
                 .success(Boolean.TRUE)
                 .httpStatus(HttpStatus.OK).build();
     }
 
-    private CreateReservationResponse from(Reservation reservation){
-        CreateReservationResponse response = new CreateReservationResponse();
-        response.setId(reservation.getId());
-        response.setDate(reservation.getDate());
-        response.setPeople(reservation.getPeople());
-        response.setRestaurant_id(reservation.getId());
-        response.setUser_id(reservation.getId());
-        return response;
+    private Reservation findAndEnsureExist(Long id){
+        return repository.findById(id).orElseThrow(NotFoundException::new);
     }
 
-    private Reservation from(CreateReservationRequest request){
+    private GetReservationResponse fromReservationToGetReservationResponse(Reservation reservation){
+        return GetReservationResponse.builder()
+                .id(reservation.getId())
+                .date(reservation.getDate())
+                .people(reservation.getPeople())
+                .user(userService.fromUserToUserResponse(reservation.getUser()))
+                .restaurant(restaurantService.fromRestaurantToRestaurantResponse(reservation.getRestaurant())).build();
+    }
+
+    private Reservation from(CreateReservationRequest request, Long userId, Long restaurantId){
         Reservation reservation = new Reservation();
         reservation.setDate(request.getDate());
         reservation.setPeople(request.getPeople());
-        reservation.setUser(userService.FindAndEnsureExists(request.getUser_id()));
-        reservation.setRestaurant(resturantService.FindAndEnsureExist(request.getRestaurant_id()));
+        reservation.setUser(userService.findAndEnsureExists(userId));
+        reservation.setRestaurant(restaurantService.findAndEnsureExist(restaurantId));
         return reservation;
     }
 
-    //from Reservation to GetReservationResponse
-    private GetReservationResponse from_get(Reservation reservation){
-        return GetReservationResponse.builder()
-                .user_id(reservation.getUser().getId())
-                .people(reservation.getPeople())
+    private CreateReservationResponse from(Reservation reservation){
+        return CreateReservationResponse.builder()
+                .id(reservation.getId())
                 .date(reservation.getDate())
-                .restaurant_id(reservation.getRestaurant().getId())
-                .id(reservation.getId()).build();
+                .people(reservation.getPeople())
+                .restaurant(restaurantService.fromRestaurantToRestaurantResponse(reservation.getRestaurant()))
+                .user(userService.fromUserToUserResponse(reservation.getUser()))
+                .build();
     }
 
-    //from Reservation to UpdateReservationResponse
-    private UpdateReservationResponse from_upd(Reservation reservation){
-        UpdateReservationResponse response = new UpdateReservationResponse();
-        response.setId(reservation.getId());
-        response.setDate(reservation.getDate());
-        response.setPeople(reservation.getPeople());
-        response.setRestaurant_id(reservation.getId());
-        response.setUser_id(reservation.getId());
-        return response;
+    private Reservation validationUpdateDateReservation(UpdateReservationRequest request, Long id){
+        Reservation reservation = findAndEnsureExist(id);
+        if(request.getDate().length() == 0 || request.getDate() == null || Objects.equals(request.getDate(), "")) {
+            reservation.setDate(reservation.getDate());
+        }else {
+            reservation.setDate(request.getDate());
+        }
+        if(request.getPeople() == null || request.getPeople() == 0) {
+            reservation.setPeople(reservation.getPeople());
+        }else {
+            reservation.setPeople(request.getPeople());
+        }
+        return reservation;
     }
 
-    //from ReservationProyection to GetReservationByRestaurantIdResponse
-    private GetReservationByRestaurantIdResponse from(ReservationProjection reservation){
-        GetReservationByRestaurantIdResponse response = new GetReservationByRestaurantIdResponse();
-        response.setId(reservation.getId());
-        response.setUserId(reservation.getUserId());
-        response.setRestaurantId(reservation.getRestaurantId());
-        response.setDate(reservation.getDate());
-        response.setPeople(reservation.getPeople());
-        return response;
+    private UpdateReservationResponse fromReservationToUpdateReservationResponse(Reservation reservation){
+        return UpdateReservationResponse.builder()
+                .id(reservation.getId())
+                .date(reservation.getDate())
+                .people(reservation.getPeople())
+                .user(userService.fromUserToUserResponse(reservation.getUser()))
+                .restaurant(restaurantService.fromRestaurantToRestaurantResponse(reservation.getRestaurant())).build();
     }
 
     @Override
-    public Reservation fromReservationProjectionToReservation(ReservationProjection reservation){
-        Reservation response = new Reservation();
-        response.setId(reservation.getId());
-        response.setUser(userService.FindAndEnsureExists(reservation.getUserId()));
-        response.setRestaurant(resturantService.FindAndEnsureExist(reservation.getRestaurantId()));
-        response.setDate(reservation.getDate());
-        response.setPeople(reservation.getPeople());
-        return response;
-    }
-
-    private Reservation FindAndEnsureExist(Long id){
-        return repository.findById(id).orElseThrow(()-> new RuntimeException("not fount"));
+    public ReservationResponse fromReservationToReservationResponse(Reservation reservation){
+        return ReservationResponse.builder()
+                .people(reservation.getPeople())
+                .date(reservation.getDate())
+                .id(reservation.getId()).build();
     }
 
 }
